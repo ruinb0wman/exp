@@ -8,13 +8,15 @@ import type { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 export type OrmType = ExpoSQLiteDatabase<typeof schema> & { $client: SQLiteDatabase };
 export type SqliteType = SQLiteDatabase;
 
-let orm: OrmType;
-let sqlite: SqliteType;
+const dbInstance: { db?: OrmType, rawDB?: SqliteType } = {}
 
 export function initDB() {
-  if (orm && sqlite) return { orm, sqlite };
-  const DATABASE_NAME = 'exp';
-  sqlite = openDatabaseSync(DATABASE_NAME);
-  orm = drizzle(sqlite, { schema });
-  return { orm: orm, sqlite };
+  if (dbInstance.db && dbInstance.rawDB) return dbInstance;
+  dbInstance.rawDB = openDatabaseSync('db.db');
+  dbInstance.db = drizzle(dbInstance.rawDB);
+  return dbInstance;
+}
+
+export function getDB() {
+  return dbInstance;
 }

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { db, rawDB } from '@/db';
+import { initDB } from '@/db';
 import migrations from '@/drizzle/migrations';
 
 type DbContextType = {
@@ -17,19 +17,24 @@ export const DbProvider = ({ children }: { children: ReactNode }) => {
     canUseDB: false,
   })
 
-  useDrizzleStudio(rawDB);
-  const { success, error } = useMigrations(db, migrations);
+  const { db, rawDB } = initDB();
+  if (rawDB) {
+    useDrizzleStudio(rawDB);
+    const { success, error } = useMigrations(db, migrations);
 
-  useEffect(() => {
-    if (success) {
-      setState({ state: 'success', canUseDB: true });
-      return;
-    }
-    if (error || !success) {
-      setState({ state: 'failed', canUseDB: false });
-      return;
-    }
-  }, [success])
+    useEffect(() => {
+      if (success) {
+        setState({ state: 'success', canUseDB: true });
+        return;
+      }
+      if (error || !success) {
+        setState({ state: 'failed', canUseDB: false });
+        return;
+      }
+    }, [success])
+  } else {
+    setState({ state: 'success', canUseDB: true });
+  }
 
   return (
     <DbContext.Provider value={{ ...state }}>
