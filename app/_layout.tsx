@@ -1,13 +1,16 @@
 import { Stack } from 'expo-router';
 import { DbProvider } from '@/context/db';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
 
   return (
     <DbProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <Stack >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </SafeAreaView>
     </DbProvider>
   );
 }

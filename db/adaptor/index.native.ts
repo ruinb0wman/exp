@@ -18,5 +18,6 @@ export function initDB() {
 }
 
 export function getDB() {
+  if (!dbInstance.db) return initDB();
   return dbInstance;
 }
