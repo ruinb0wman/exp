@@ -8,7 +8,7 @@ export const darkColor = {
 
   // border
   border: '#000',
-  lightBorder: '#636466',
+  lightBorder: '#A1A1AA',
   darkVBorder: '#000',
 
   // fill
@@ -21,16 +21,33 @@ export const darkColor = {
 
 export const lightColor = darkColor;
 
-export const theme = {
-  fontSize: '16',
-  fontSizeBig: '20',
-  fontSizeSmall: '12',
+export const size = {
+  text: 16,
+  bigText: 20,
+  smallText: 12,
   // icon
-  iconSize: '24'
+  icon: 20,
+  bigIcon: 24,
+  smallIcon: 16,
+  eSmallIcon: 12,
+  eBigIcon: 28,
+  // spacing
+  spacing: 15,
+  smallSpacing: 10,
+  bigSpacing: 20,
+  eSmallSpacing: 5,
+  eBigSpacing: 25,
+  // border
+  border: 1,
+  boldBorder: 2,
+  // radius
+  radius: 4,
+  sRadius: 2,
+  lRadius: 8
 }
 
 export default {
   light: lightColor,
   dark: darkColor,
-  theme
+  size
 }

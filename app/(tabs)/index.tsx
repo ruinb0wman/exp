@@ -31,43 +31,7 @@ export default function Index() {
     }, [canUseDB]))
 
   // Sample tasks data
-  const tasks: Task[] = [
-    {
-      id: 1,
-      title: 'Morning Jogging',
-      description: '30-minute run around the park (+20 exp)',
-      completed: true,
-      experience: 20
-    },
-    {
-      id: 2,
-      title: 'Read a Chapter',
-      description: 'Read at least one chapter of \'Atomic Habits\' (+15 exp)',
-      completed: true,
-      experience: 15
-    },
-    {
-      id: 3,
-      title: 'Plan Tomorrow',
-      description: 'Organize tasks and schedule for the next day (+10 exp)',
-      completed: true,
-      experience: 10
-    },
-    {
-      id: 4,
-      title: 'Drink 8 glasses of water',
-      description: 'Stay hydrated throughout the day (+5 exp)',
-      completed: false,
-      experience: 5
-    },
-    {
-      id: 5,
-      title: 'Practice coding for 1 hour',
-      description: 'Work on a personal project or do a coding challenge (+30 exp)',
-      completed: false,
-      experience: 30
-    }
-  ];
+  const tasks: Task[] = mock.tasks;
 
   // Calculate completed tasks
   const completedTasks = tasks.filter(task => task.completed).length;
@@ -75,11 +39,7 @@ export default function Index() {
   const progressPercentage = (completedTasks / totalTasks) * 100;
 
   // User data
-  const userProfile = {
-    name: 'Alex',
-    exp: 1250,
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8FjyggINvGTsj3CN9aCnRyxyz3E1lEwJCD3Y1HbCZLlN6WfHd3JAMChioB-ZaCXw4SFCVUBNy2lgc8YOw2sXiZD0TGBZFU4SzcUDHoP0z2kF4wsCkbDAFnnniBFe5WAtf4M6NvsT1PSMVpVhNN08XPiok-3VwhphQB74YPpts56bUPuOO29J9hQY4NdWFEc2jrV-eK8vTOYt1l5jom1-6HCqMdg6Q6-BcTSk_mBkdZQqfwks17cmrDJKX5HMdPatyuHq0kypYywU'
-  };
+  const userProfile = mock.userProfile;
 
   const handleTaskPress = (task: Task) => {
     setSelectedTask(task);
@@ -421,3 +381,47 @@ const styles = StyleSheet.create({
   },
 });
 
+const mock = {
+  tasks: [
+    {
+      id: 1,
+      title: 'Morning Jogging',
+      description: '30-minute run around the park (+20 exp)',
+      completed: true,
+      experience: 20
+    },
+    {
+      id: 2,
+      title: 'Read a Chapter',
+      description: 'Read at least one chapter of \'Atomic Habits\' (+15 exp)',
+      completed: true,
+      experience: 15
+    },
+    {
+      id: 3,
+      title: 'Plan Tomorrow',
+      description: 'Organize tasks and schedule for the next day (+10 exp)',
+      completed: true,
+      experience: 10
+    },
+    {
+      id: 4,
+      title: 'Drink 8 glasses of water',
+      description: 'Stay hydrated throughout the day (+5 exp)',
+      completed: false,
+      experience: 5
+    },
+    {
+      id: 5,
+      title: 'Practice coding for 1 hour',
+      description: 'Work on a personal project or do a coding challenge (+30 exp)Work on a personal project or do a coding challenge (+30 exp)',
+      completed: false,
+      experience: 30
+    }
+  ],
+  userProfile: {
+    name: 'Alex',
+    exp: 1250,
+    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8FjyggINvGTsj3CN9aCnRyxyz3E1lEwJCD3Y1HbCZLlN6WfHd3JAMChioB-ZaCXw4SFCVUBNy2lgc8YOw2sXiZD0TGBZFU4SzcUDHoP0z2kF4wsCkbDAFnnniBFe5WAtf4M6NvsT1PSMVpVhNN08XPiok-3VwhphQB74YPpts56bUPuOO29J9hQY4NdWFEc2jrV-eK8vTOYt1l5jom1-6HCqMdg6Q6-BcTSk_mBkdZQqfwks17cmrDJKX5HMdPatyuHq0kypYywU'
+  }
+}

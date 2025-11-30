@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native"
 import { ChevronLeft } from "lucide-react-native";
-import theme from "@/constants/theme";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/context/theme";
 
 interface Props {
   leftNode?: ReactNode,
@@ -12,7 +12,9 @@ interface Props {
 }
 
 export default function NavBar({ leftNode, rightNode, back, title }: Props) {
+  const { colors, size } = useTheme();
   const router = useRouter();
+
   return (
     <View style={styles.topAppBar}>
       {back ?
@@ -20,7 +22,7 @@ export default function NavBar({ leftNode, rightNode, back, title }: Props) {
           console.log('back')
           router.back();
         }}>
-          <ChevronLeft color={theme.fontColorDark} size={theme.fontSizeBig} />
+          <ChevronLeft color={colors.text} size={size.icon} />
         </TouchableOpacity> :
         leftNode ? leftNode : null
       }

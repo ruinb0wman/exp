@@ -9,6 +9,7 @@ interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
   colors: typeof themeConfig.dark; // 类型推导
+  size: typeof themeConfig.size;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -36,6 +37,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         theme,
         toggleTheme,
         colors: themeConfig[theme],
+        size: themeConfig.size
       }}
     >
       {children}
