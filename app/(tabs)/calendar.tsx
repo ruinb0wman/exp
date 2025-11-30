@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
-
-// Define the day data type
-interface DayData {
-  day: number;
-  hasPrimary?: boolean;
-  hasAlert?: boolean;
-  hasSuccess?: boolean;
-  isToday?: boolean;
-}
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import NavBar from '@/components/navBar';
+import CalendarView from "@/components/calendar";
+import { CircleDot, Plus } from 'lucide-react-native';
+import theme from "@/constants/theme";
 
 // Define the task data type
 interface Task {
@@ -20,39 +15,6 @@ interface Task {
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string>('September 24');
-  const [currentMonth, setCurrentMonth] = useState<number>(8); // September is 8 (0-indexed)
-  const [currentYear, setCurrentYear] = useState<number>(2024);
-
-  // Generate days for the calendar view
-  const generateDays = (): DayData[] => {
-    // For September 2024, day 1 (Sunday) falls on the first column (index 0)
-    // We need to add empty slots for days before the 1st based on what day of the week the 1st falls on
-    // September 1, 2024 is a Sunday (day 0), so no empty slots needed at the beginning
-    const days: DayData[] = [];
-
-    // Calculate what day of the week the 1st falls on
-    // September 1, 2024 was a Sunday, which is day 0
-    const firstDay = new Date(2024, 8, 1).getDay(); // 8 for September (0-indexed)
-
-    // Add empty slots for days before the 1st of the month
-    for (let i = 0; i < firstDay; i++) {
-      days.push({ day: 0 }); // Placeholder for empty days
-    }
-
-    // Add days 1-30 with their indicators
-    for (let day = 1; day <= 30; day++) {
-      const dayData: DayData = {
-        day: day,
-        hasPrimary: day === 2 || day === 9, // Example primary indicators
-        hasAlert: day === 4, // Example alert indicator
-        hasSuccess: day === 5, // Example success indicator
-        isToday: day === 24 // September 24th is the selected date
-      };
-      days.push(dayData);
-    }
-
-    return days;
-  };
 
   // Sample tasks for the selected day
   const tasks: Task[] = [
@@ -76,114 +38,27 @@ export default function Calendar() {
     }
   ];
 
-  // Handle month navigation
-  const goToPreviousMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11); // December
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
-  };
-
-  const goToNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0); // January
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
-  };
-
-  // Get month name
-  const getMonthName = (month: number): string => {
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return monthNames[month];
-  };
-
-  const days = generateDays();
-  const monthName = getMonthName(currentMonth);
-
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
 
       {/* Top App Bar */}
-      <View style={styles.topAppBar}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.icon}>◀</Text>
-        </TouchableOpacity>
-        <Text style={styles.topAppBarTitle}>Calendar</Text>
-        <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.icon}>+</Text>
-        </TouchableOpacity>
-      </View>
+      <NavBar title='Calendar'
+        leftNode={
+          <TouchableOpacity >
+            <CircleDot color={theme.fontColorDark} size={theme.fontSizeBig} />
+          </TouchableOpacity>
+        }
+        rightNode={
+          <TouchableOpacity >
+            <Plus color={theme.fontColorDark} size={theme.fontSizeBig} />
+          </TouchableOpacity>
+        }
+      />
+
+      <CalendarView />
 
       {/* Calendar Picker */}
       <ScrollView style={styles.mainContent}>
-        <View style={styles.calendarContainer}>
-          {/* Month Navigation */}
-          <View style={styles.monthNavigation}>
-            <TouchableOpacity onPress={goToPreviousMonth} style={styles.navButton}>
-              <Text style={styles.navIcon}>‹</Text>
-            </TouchableOpacity>
-            <Text style={styles.monthText}>{monthName} {currentYear}</Text>
-            <TouchableOpacity onPress={goToNextMonth} style={styles.navButton}>
-              <Text style={styles.navIcon}>›</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Day Headers */}
-          <View style={styles.dayHeaders}>
-            <Text style={styles.dayHeader}>S</Text>
-            <Text style={styles.dayHeader}>M</Text>
-            <Text style={styles.dayHeader}>T</Text>
-            <Text style={styles.dayHeader}>W</Text>
-            <Text style={styles.dayHeader}>T</Text>
-            <Text style={styles.dayHeader}>F</Text>
-            <Text style={styles.dayHeader}>S</Text>
-          </View>
-
-          {/* Calendar Days Grid */}
-          <View style={styles.daysGrid}>
-            {days.map((dayData, index) => {
-              if (dayData.day === 0) {
-                return <View key={`empty-${index}`} style={styles.emptyDay} />;
-              }
-
-              return (
-                <TouchableOpacity
-                  key={`day-${dayData.day}`}
-                  style={[
-                    styles.dayButton,
-                    dayData.isToday ? styles.today : null
-                  ]}
-                  onPress={() => setSelectedDate(`${monthName} ${dayData.day}`)}
-                >
-                  <View style={styles.dayContent}>
-                    <Text style={[
-                      styles.dayNumber,
-                      dayData.isToday ? styles.todayText : null
-                    ]}>
-                      {dayData.day}
-                    </Text>
-                    {(dayData.hasPrimary || dayData.hasAlert || dayData.hasSuccess) && (
-                      <View style={[
-                        styles.indicator,
-                        dayData.hasPrimary ? styles.primaryIndicator : null,
-                        dayData.hasAlert ? styles.alertIndicator : null,
-                        dayData.hasSuccess ? styles.successIndicator : null
-                      ]} />
-                    )}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
 
         {/* Tasks for the day */}
         <View style={styles.tasksSection}>
@@ -215,39 +90,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#101922', // background-dark
-  },
-  topAppBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    paddingBottom: 8,
-    backgroundColor: '#101922', // background-dark
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  topAppBarTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-  },
-  addButton: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  icon: {
-    fontSize: 24,
-    color: '#FFFFFF',
   },
   mainContent: {
     flex: 1,

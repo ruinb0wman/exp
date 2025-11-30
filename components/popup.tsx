@@ -1,19 +1,22 @@
-import React, { useEffect } from 'react';
-import { Modal, View, Pressable, StyleSheet, Dimensions } from 'react-native';
+import React from 'react';
+import { Modal, View, Pressable, StyleSheet } from 'react-native';
+import { useTheme } from '@/context/theme';
 
-interface PopupProps {
+interface Props {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-const Popup: React.FC<PopupProps> = ({ visible, onClose, children }) => {
+export default function Popup({ visible, onClose, children }: Props) {
+  const { colors } = useTheme();
+
   return (
     <Modal
       animationType="slide"
       visible={visible}
       onRequestClose={onClose}
-      backdropColor='rgba(0, 0, 0, 0.2)'
+      backdropColor={colors.overlayBackground}
     >
       <Pressable style={styles.overlay} onPress={onClose} />
       <View style={styles.container}>
@@ -45,5 +48,3 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 });
-
-export default Popup;

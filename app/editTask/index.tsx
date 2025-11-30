@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import type { taskTemplates } from "@/db";
+
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Platform } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import NavBar from '@/components/navBar';
+import CustomInput from "@/components/customInput";
+
 
 // Define types
 interface Subtask {
@@ -9,8 +13,26 @@ interface Subtask {
   completed: boolean;
 }
 
-const EditTaskScreen = () => {
-  const [taskName, setTaskName] = useState('');
+interface Props {
+  id?: number;
+}
+
+const EditTaskScreen = ({ id }: Props) => {
+  const [task, setTask] = useState<typeof taskTemplates.$inferInsert>({
+    id: 0,
+    userId: 0,
+    title: '',
+    rewardPoints: 10,
+    repeatMode: 'daily',
+    endCondition: 'manual',
+    description: null,
+    repeatInterval: null,
+    repeatDaysOfWeek: null,
+    repeatDaysOfMonth: null,
+    endValue: null,
+    enabled: true,
+  });
+  // const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [rewardPoints, setRewardPoints] = useState(10);
   const [repeatOption, setRepeatOption] = useState('Daily');
@@ -42,30 +64,35 @@ const EditTaskScreen = () => {
     setSubtasks(subtasks.filter(subtask => subtask.id !== id));
   };
 
+  useEffect(() => {
+    if (!id) return;
+    // 获取task内容
+    // getTask();
+    // setTask();
+  })
+
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
-
-      {/* Top App Bar */}
-      <View style={styles.topAppBar}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Create Task</Text>
-        <View style={styles.placeholder} />
-      </View>
+      <NavBar title="Create Task" back />
 
       {/* Main Content */}
       <ScrollView style={styles.mainContent} contentContainerStyle={styles.scrollContent}>
         {/* Main Task Details Card */}
         <View style={styles.card}>
           <Text style={styles.inputLabel}>Task Name</Text>
-          <TextInput
+          <CustomInput
             style={styles.textInput}
             placeholder="e.g., Read for 30 minutes"
-            value={taskName}
-            onChangeText={setTaskName}
+            value={task.title}
+            onChangeText={(title) => setTask({ ...task, title })}
           />
+          {/* <TextInput */}
+          {/*   placeholderTextColor="#777" */}
+          {/*   style={styles.textInput} */}
+          {/*   placeholder="e.g., Read for 30 minutes" */}
+          {/*   value={task.title} */}
+          {/*   onChangeText={(title) => setTask({ ...task, title })} */}
+          {/* /> */}
 
           <Text style={styles.inputLabel}>Description (optional)</Text>
           <TextInput
@@ -255,7 +282,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#ffffff', // dark:text-white
   },
   textArea: {
     height: 96,

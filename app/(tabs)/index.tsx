@@ -6,9 +6,10 @@ import { useCallback } from "react";
 import { useDbContext } from "@/context/db";
 import { useFocusEffect } from "@react-navigation/native";
 import TaskDetail from '@/components/taskDetail';
+import TaskCard from '@/components/taskCard';
 import { Plus } from 'lucide-react-native';
 
-interface Task {
+export interface Task {
   id: number;
   title: string;
   description: string;
@@ -135,50 +136,11 @@ export default function Index() {
           </View>
 
           {tasks.map((task) => (
-            <TouchableOpacity
+            <TaskCard
               key={task.id}
-              style={[
-                styles.taskItem,
-                task.completed ? styles.completedTask : {}
-              ]}
-              onPress={() => handleTaskPress(task)}
-            >
-              <View style={styles.taskContent}>
-                <TouchableOpacity style={styles.checkboxContainer}>
-                  <View style={[
-                    styles.checkbox,
-                    task.completed ? styles.checkedCheckbox : {}
-                  ]}>
-                    {task.completed && (
-                      <Text style={styles.checkmark}>✓</Text>
-                    )}
-                  </View>
-                </TouchableOpacity>
-
-                <View style={styles.taskDetails}>
-                  <Text
-                    style={[
-                      styles.taskTitle,
-                      task.completed ? styles.completedTaskTitle : {}
-                    ]}
-                  >
-                    {task.title}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.taskDescription,
-                      task.completed ? styles.completedTaskDescription : {}
-                    ]}
-                  >
-                    {task.description}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.taskIcon}>
-                <Text style={styles.chevronIcon}>›</Text>
-              </View>
-            </TouchableOpacity>
+              task={task}
+              onPress={handleTaskPress}
+            />
           ))}
         </View>
       </ScrollView>

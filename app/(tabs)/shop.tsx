@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
 import { History, Search, Star, Home, CheckCheck, Store, User } from 'lucide-react-native';
+import CustomInput from '@/components/customInput';
 
 const { width } = Dimensions.get('window');
 
@@ -49,10 +50,9 @@ const Shop = () => {
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <Search size={20} color="#9ca3af" style={styles.searchIcon} />
-          <TextInput
+          <CustomInput
             style={styles.searchInput}
             placeholder="Search for rewards"
-            placeholderTextColor="#9ca3af"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -200,7 +200,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: '100%',
-    color: '#fff',
     fontSize: 16,
     paddingVertical: 0,
     paddingHorizontal: 8,
