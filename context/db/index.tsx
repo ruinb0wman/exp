@@ -2,7 +2,7 @@ import React, { createContext, useContext, ReactNode, useState, useEffect } from
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { initDB } from '@/db';
-import migrations from '@/drizzle/migrations';
+import migrations from '@/db/drizzle/migrations';
 
 type DbContextType = {
   state: 'pending' | 'failed' | 'success';
