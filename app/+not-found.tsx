@@ -1,5 +1,7 @@
+import { Text } from "react-native";
+
 export default function NotFound() {
   return (
-    <div>Not Found</div>
+    <Text>Not Found</Text>
   )
 }

@@ -1,9 +1,12 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Pressable } from 'react-native';
+import { router } from "expo-router";
 import { useUser } from "@/store/user";
 import { useCallback } from "react";
 import { useDbContext } from "@/context/db";
 import { useFocusEffect } from "@react-navigation/native";
+import TaskDetail from '@/components/taskDetail';
+import { Plus } from 'lucide-react-native';
 
 interface Task {
   id: number;
@@ -16,6 +19,8 @@ interface Task {
 export default function Index() {
   const { users, setUsers } = useUser();
   const { canUseDB } = useDbContext();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isTaskDetailVisible, setIsTaskDetailVisible] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -75,13 +80,10 @@ export default function Index() {
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8FjyggINvGTsj3CN9aCnRyxyz3E1lEwJCD3Y1HbCZLlN6WfHd3JAMChioB-ZaCXw4SFCVUBNy2lgc8YOw2sXiZD0TGBZFU4SzcUDHoP0z2kF4wsCkbDAFnnniBFe5WAtf4M6NvsT1PSMVpVhNN08XPiok-3VwhphQB74YPpts56bUPuOO29J9hQY4NdWFEc2jrV-eK8vTOYt1l5jom1-6HCqMdg6Q6-BcTSk_mBkdZQqfwks17cmrDJKX5HMdPatyuHq0kypYywU'
   };
 
-  // Navigation items
-  const navItems = [
-    { id: 'home', title: 'Home', icon: 'home' },
-    { id: 'store', title: 'Store', icon: 'storefront' },
-    { id: 'stats', title: 'Stats', icon: 'bar_chart' },
-    { id: 'settings', title: 'Settings', icon: 'settings' }
-  ];
+  const handleTaskPress = (task: Task) => {
+    setSelectedTask(task);
+    setIsTaskDetailVisible(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -133,12 +135,13 @@ export default function Index() {
           </View>
 
           {tasks.map((task) => (
-            <View
+            <TouchableOpacity
               key={task.id}
               style={[
                 styles.taskItem,
                 task.completed ? styles.completedTask : {}
               ]}
+              onPress={() => handleTaskPress(task)}
             >
               <View style={styles.taskContent}>
                 <TouchableOpacity style={styles.checkboxContainer}>
@@ -175,15 +178,24 @@ export default function Index() {
               <View style={styles.taskIcon}>
                 <Text style={styles.chevronIcon}>›</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
 
       {/* Add Task Button */}
-      <TouchableOpacity style={styles.fab}>
-        <Text style={styles.fabIcon}>+</Text>
+      <TouchableOpacity style={styles.fab} onPress={() => router.push('/editTask')}>
+        <Plus size={32} color="#fff" />
       </TouchableOpacity>
+
+      {/* Task Detail Modal */}
+      {selectedTask && (
+        <TaskDetail
+          visible={isTaskDetailVisible}
+          onClose={() => setIsTaskDetailVisible(false)}
+          task={selectedTask}
+        />
+      )}
     </View>
   );
 }
@@ -196,7 +208,7 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingTop: 50,
-    paddingBottom: 120, // Extra padding to account for bottom nav
+    paddingBottom: 50, // Extra padding to account for bottom nav
   },
   header: {
     flexDirection: 'row',
@@ -406,11 +418,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
-  },
-  fabIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
   },
   bottomNav: {
     position: 'absolute',

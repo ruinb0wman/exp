@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <DbProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-        <Stack >
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaView>
