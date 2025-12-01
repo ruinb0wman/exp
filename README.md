@@ -6,10 +6,10 @@ exp 是一个以任务为导向、商城商品作为激励的自律养成工具�
 
 ## preview
 
-![](./docs/1_preview.png)
-![](./docs/2_preview.png)
-![](./docs/3_preview.png)
-![](./docs/4_preview.png)
+![](./docs/1_preview.jpg)
+![](./docs/2_preview.jpg)
+![](./docs/3_preview.jpg)
+![](./docs/4_preview.jpg)
 
 ## 核心功能
 
