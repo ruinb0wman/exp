@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import NavBar from '@/components/navBar';
 
 const EditRewardScreen = () => {
   const [productName, setProductName] = useState('');
@@ -42,17 +43,12 @@ const EditRewardScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top App Bar */}
-      <View style={styles.topAppBar}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.topAppBarTitle}>Add New Product</Text>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+    <View style={styles.container}>
+      <NavBar title="Add New Reward" back rightNode={
+        <TouchableOpacity onPress={handleSave}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
-      </View>
+      } />
 
       {/* Main Content */}
       <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
@@ -163,7 +159,7 @@ const EditRewardScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -171,16 +167,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#101922', // dark background
-  },
-  topAppBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#101922', // dark background
-    padding: 16,
-    paddingBottom: 8,
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
   },
   backButton: {
     width: 48,
