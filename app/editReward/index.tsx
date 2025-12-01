@@ -1,40 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, ScrollView, Switch, StyleSheet } from 'react-native';
 import NavBar from '@/components/navBar';
+import { productTemplates } from "@/db"
+import CustomInput from '@/components/customInput';
 
 const EditRewardScreen = () => {
-  const [productName, setProductName] = useState('');
-  const [description, setDescription] = useState('');
-  const [pointCost, setPointCost] = useState('');
-  const [inventoryQuantity, setInventoryQuantity] = useState('10');
-  const [restockCycle, setRestockCycle] = useState('None');
-  const [limitedStock, setLimitedStock] = useState(true);
-
-  const restockOptions = ['None', 'Daily', 'Weekly', 'Monthly'];
+  const [reward, setReward] = useState<typeof productTemplates.$inferInsert>({
+    userId: 0, // 需由后端或上下文填充，前端可设为 null
+    title: '',
+    description: '',
+    pointsCost: 0,
+    type: 'consumable' as const, // 默认值来自 schema
+    validDuration: 0, // 0 表示永久有效
+    maxPerUser: -1, // -1 表示无限制
+    enabled: true,
+    replenishmentMode: 'none' as const,
+    replenishmentInterval: null as number | null, // 仅在 daily 模式下使用
+    replenishmentDaysOfWeek: null as string | null, // JSON 字符串，如 "[1,3]"
+    replenishmentDaysOfMonth: null as string | null, // JSON 字符串，如 "[1,15]"
+    createdAt: undefined, // 通常由数据库自动生成
+  });
 
   const handleSave = () => {
     // Implementation for saving the reward
-    console.log('Saving reward:', {
-      productName,
-      description,
-      pointCost,
-      inventoryQuantity,
-      restockCycle,
-      limitedStock
-    });
+    console.log('Saving reward:', reward);
   };
 
   const handleAddProduct = () => {
     // Implementation for adding the product
-    console.log('Adding product:', {
-      productName,
-      description,
-      pointCost,
-      inventoryQuantity,
-      restockCycle,
-      limitedStock
-    });
+    console.log('Adding product:', reward);
   };
 
   const handleImageUpload = () => {
@@ -66,84 +60,141 @@ const EditRewardScreen = () => {
         {/* Core Information Section */}
         <View style={styles.section}>
           <Text style={styles.label}>Product Name</Text>
-          <TextInput
-            style={styles.input}
+          <CustomInput
             placeholder="Enter product name"
-            value={productName}
-            onChangeText={setProductName}
+            value={reward.title}
+            onChangeText={(title) => setReward(prev => ({ ...prev, title }))}
             placeholderTextColor="#9ca3af"
           />
 
           <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
+          <CustomInput
             placeholder="Enter a detailed description"
-            value={description}
-            onChangeText={setDescription}
+            value={reward.description?.toString()}
+            onChangeText={(description) => setReward(prev => ({ ...prev, description }))}
             multiline
             textAlignVertical="top"
-            placeholderTextColor="#9ca3af"
           />
 
           <Text style={styles.label}>Point Cost</Text>
-          <TextInput
-            style={styles.input}
+          <CustomInput
             placeholder="e.g., 500"
-            value={pointCost}
-            onChangeText={setPointCost}
+            value={reward.pointsCost.toString()}
+            onChangeText={(pointsCost) => setReward(prev => ({ ...prev, pointsCost: parseInt(pointsCost) || 0 }))}
             keyboardType="numeric"
-            placeholderTextColor="#9ca3af"
           />
         </View>
 
-        {/* Restock Cycle Section */}
+        {/* Type and Validity Section */}
         <View style={styles.section}>
-          <Text style={styles.label}>Restock Cycle</Text>
+          <Text style={styles.label}>Product Type</Text>
           <View style={styles.buttonRow}>
-            {restockOptions.map((option) => (
+            {(['consumable', 'permanent'] as const).map((option) => (
               <TouchableOpacity
                 key={option}
                 style={[
                   styles.cycleButton,
-                  restockCycle === option && styles.cycleButtonSelected
+                  reward.type === option && styles.cycleButtonSelected
                 ]}
-                onPress={() => setRestockCycle(option)}
+                onPress={() => setReward(prev => ({ ...prev, type: option }))}
               >
                 <Text
                   style={[
                     styles.cycleButtonText,
-                    restockCycle === option && styles.cycleButtonTextSelected
+                    reward.type === option && styles.cycleButtonTextSelected
                   ]}
                 >
-                  {option}
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
+
+          <Text style={[styles.label, { marginTop: 16 }]}>Valid Duration (ms)</Text>
+          <CustomInput
+            placeholder="e.g., 0 (0 for permanent, 86400000 for 1 day)"
+            value={reward.validDuration?.toString()}
+            onChangeText={(validDuration) => setReward(prev => ({ ...prev, validDuration: parseInt(validDuration) || 0 }))}
+            keyboardType="numeric"
+          />
         </View>
 
-        {/* Limited Stock Section */}
+        {/* Availability Section */}
         <View style={styles.section}>
           <View style={styles.rowBetween}>
-            <Text style={styles.label}>Limited Stock</Text>
+            <Text style={styles.label}>Enabled</Text>
             <Switch
-              value={limitedStock}
-              onValueChange={setLimitedStock}
+              value={reward.enabled}
+              onValueChange={(enabled) => setReward(prev => ({ ...prev, enabled }))}
               trackColor={{ false: '#374151', true: '#2b8cee' }}
-              thumbColor={limitedStock ? '#ffffff' : '#94a3b8'}
+              thumbColor={reward.enabled ? '#ffffff' : '#94a3b8'}
             />
           </View>
 
-          {limitedStock && (
+          <Text style={[styles.label, { marginTop: 16 }]}>Max Per User</Text>
+          <CustomInput
+            placeholder="e.g., -1 (no limit), 1, 5"
+            value={reward.maxPerUser?.toString()}
+            onChangeText={(maxPerUser) => setReward(prev => ({ ...prev, maxPerUser: parseInt(maxPerUser) || -1 }))}
+            keyboardType="numeric"
+          />
+        </View>
+
+        {/* Restock Settings Section */}
+        <View style={styles.section}>
+          <Text style={styles.label}>Restock Mode</Text>
+          <View style={styles.buttonRow}>
+            {(['none', 'daily', 'weekly', 'monthly'] as const).map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={[
+                  styles.cycleButton,
+                  reward.replenishmentMode === option && styles.cycleButtonSelected
+                ]}
+                onPress={() => setReward(prev => ({ ...prev, replenishmentMode: option }))}
+              >
+                <Text
+                  style={[
+                    styles.cycleButtonText,
+                    reward.replenishmentMode === option && styles.cycleButtonTextSelected
+                  ]}
+                >
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {reward.replenishmentMode === 'daily' && (
             <>
-              <Text style={styles.label}>Inventory Quantity</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g., 10"
-                value={inventoryQuantity}
-                onChangeText={setInventoryQuantity}
+              <Text style={[styles.label, { marginTop: 16 }]}>Restock Interval (days)</Text>
+              <CustomInput
+                placeholder="e.g., 1 (every 1 day)"
+                value={reward.replenishmentInterval?.toString() || ''}
+                onChangeText={(replenishmentInterval) => setReward(prev => ({ ...prev, replenishmentInterval: replenishmentInterval ? parseInt(replenishmentInterval) : null }))}
                 keyboardType="numeric"
-                placeholderTextColor="#9ca3af"
+              />
+            </>
+          )}
+
+          {reward.replenishmentMode === 'weekly' && (
+            <>
+              <Text style={[styles.label, { marginTop: 16 }]}>Days of Week (JSON)</Text>
+              <CustomInput
+                placeholder="e.g., [1, 3, 5] (Mon, Wed, Fri)"
+                value={reward.replenishmentDaysOfWeek || ''}
+                onChangeText={(replenishmentDaysOfWeek) => setReward(prev => ({ ...prev, replenishmentDaysOfWeek: replenishmentDaysOfWeek || null }))}
+              />
+            </>
+          )}
+
+          {reward.replenishmentMode === 'monthly' && (
+            <>
+              <Text style={[styles.label, { marginTop: 16 }]}>Days of Month (JSON)</Text>
+              <CustomInput
+                placeholder="e.g., [1, 15] (1st and 15th)"
+                value={reward.replenishmentDaysOfMonth || ''}
+                onChangeText={(replenishmentDaysOfMonth) => setReward(prev => ({ ...prev, replenishmentDaysOfMonth: replenishmentDaysOfMonth || null }))}
               />
             </>
           )}
