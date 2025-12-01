@@ -4,6 +4,13 @@
 
 exp 是一个以任务为导向、商城商品作为激励的自律养成工具。用户通过完成任务获得积分，用积分在商城兑换商品，形成正向激励循环，帮助养成良好习惯。
 
+## preview
+
+![](./docs/1_preview.png)
+![](./docs/2_preview.png)
+![](./docs/3_preview.png)
+![](./docs/4_preview.png)
+
 ## 核心功能
 
 ### 任务管理

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const EditRewardScreen = () => {
@@ -133,8 +133,8 @@ const EditRewardScreen = () => {
             <Switch
               value={limitedStock}
               onValueChange={setLimitedStock}
-              trackColor={{ false: '#d1d5db', true: '#2b8cee' }}
-              thumbColor={limitedStock ? '#ffffff' : '#ffffff'}
+              trackColor={{ false: '#374151', true: '#2b8cee' }}
+              thumbColor={limitedStock ? '#ffffff' : '#94a3b8'}
             />
           </View>
 
@@ -170,41 +170,17 @@ const EditRewardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...Platform.select({
-      ios: {
-        backgroundColor: '#f6f7f8',
-      },
-      android: {
-        backgroundColor: '#f6f7f8',
-      },
-      default: {
-        backgroundColor: '#f6f7f8',
-      }
-    })
-  },
-  darkContainer: {
     backgroundColor: '#101922', // dark background
   },
   topAppBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f6f7f8', // light background
+    backgroundColor: '#101922', // dark background
     padding: 16,
     paddingBottom: 8,
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    ...Platform.select({
-      ios: {
-        zIndex: 10,
-      },
-      android: {
-        elevation: 1,
-      },
-      default: {
-        boxShadow: '0 1px 0 rgba(0, 0, 0, 0.1)',
-      }
-    })
+    borderBottomColor: '#1a1a1a',
   },
   backButton: {
     width: 48,
@@ -215,22 +191,16 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 16,
-    color: '#1e293b', // slate-800
-  },
-  darkBackIcon: {
-    color: '#ffffff',
+    color: '#ffffff', // white in dark mode
   },
   topAppBarTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#0f172a', // slate-900
+    color: '#ffffff', // white in dark mode
     flex: 1,
     textAlign: 'center',
     lineHeight: 24,
     letterSpacing: -0.24, // tracking-[-0.015em]
-  },
-  darkTopAppBarTitle: {
-    color: '#ffffff',
   },
   saveButton: {
     width: 48,
@@ -243,9 +213,6 @@ const styles = StyleSheet.create({
     color: '#2b8cee', // primary color
     lineHeight: 20,
     letterSpacing: 0.24, // tracking-[0.015em]
-  },
-  darkSaveButtonText: {
-    color: '#ffffff',
   },
   mainContent: {
     flex: 1,
@@ -264,14 +231,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: '#cbd5e1', // slate-300
+    borderColor: '#334155', // slate-700 dark
     paddingVertical: 40,
     paddingHorizontal: 24,
-    backgroundColor: '#f8fafc', // slate-50
-  },
-  darkImageUploaderContainer: {
-    borderColor: '#334155', // slate-700
-    backgroundColor: '#1e293b', // slate-800
+    backgroundColor: '#1e293b', // slate-800 dark
   },
   imageUploaderContent: {
     alignItems: 'center',
@@ -281,22 +244,16 @@ const styles = StyleSheet.create({
   imageUploaderTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#0f172a', // slate-900
+    color: '#ffffff', // white in dark mode
     textAlign: 'center',
     lineHeight: 24,
     letterSpacing: -0.24, // tracking-[-0.015em]
   },
-  darkImageUploaderTitle: {
-    color: '#ffffff',
-  },
   imageUploaderSubtitle: {
     fontSize: 14,
-    color: '#475569', // slate-600
+    color: '#94a3b8', // slate-400 dark
     textAlign: 'center',
     lineHeight: 20,
-  },
-  darkImageUploaderSubtitle: {
-    color: '#94a3b8', // slate-400
   },
   uploadButton: {
     minWidth: 84,
@@ -320,28 +277,19 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#1e293b', // slate-800
+    color: '#ffffff', // white in dark mode
     lineHeight: 20,
     paddingBottom: 8,
-  },
-  darkLabel: {
-    color: '#ffffff',
   },
   input: {
     height: 56,
     borderWidth: 1,
-    borderColor: '#cbd5e1', // slate-300
+    borderColor: '#334155', // slate-700 dark
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
-    color: '#0f172a', // slate-900
-    backgroundColor: '#ffffff',
-    fontFamily: Platform.OS === 'android' ? 'Roboto' : undefined,
-  },
-  darkInput: {
-    borderColor: '#334155', // slate-700
-    color: '#ffffff',
-    backgroundColor: '#1e293b', // slate-800
+    color: '#ffffff', // white in dark mode
+    backgroundColor: '#1e293b', // slate-800 dark
   },
   textArea: {
     height: 144,
@@ -357,13 +305,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     paddingVertical: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1e293b', // slate-800 dark
     borderWidth: 1,
-    borderColor: '#cbd5e1', // slate-300
-  },
-  darkCycleButton: {
-    backgroundColor: '#1e293b', // slate-800
-    borderColor: '#334155', // slate-700
+    borderColor: '#334155', // slate-700 dark
   },
   cycleButtonSelected: {
     backgroundColor: '#2b8cee', // primary
@@ -372,10 +316,7 @@ const styles = StyleSheet.create({
   cycleButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#1e293b', // slate-800
-  },
-  darkCycleButtonText: {
-    color: '#ffffff',
+    color: '#ffffff', // white in dark mode
   },
   cycleButtonTextSelected: {
     color: '#ffffff',
