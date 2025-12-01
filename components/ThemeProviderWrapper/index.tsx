@@ -4,12 +4,12 @@ import { useTheme } from '@/context/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ThemeProviderWrapper() {
-  const { colors } = useTheme();
+  const { colors, size } = useTheme();
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <StatusBar />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }} >
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background, padding: size.sSpacing } }} >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </SafeAreaView>

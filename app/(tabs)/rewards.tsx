@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
-import { History, Search, Star, Home, CheckCheck, Store, User } from 'lucide-react-native';
+import { History, Search, Star, Plus } from 'lucide-react-native';
 import CustomInput from '@/components/customInput';
+import Navbar from '@/components/navBar'
+import { useTheme } from '@/context/theme';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
 const Shop = () => {
   const [selectedChip, setSelectedChip] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const { colors, size } = useTheme();
+  const router = useRouter();
 
   const rewards = [
     { id: 1, name: '1-Month Streaming', points: '500 PTS', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAKa4TzRKo6waxNjMh_IKTuwH0zVZ6HpSFavjgMfjrxVU4pWJiSOH4nJMV_FK9cpa52OW-HJZVY5m8RpjF7Dmn8MrgksQ5pG768K97XEDZF_Im0Cs6yPcqkTqIWbUZiPAj9yO5niOzC9yyaU29iOzarbx3vF5RvwGouDU8qNEJMt3yMUuP4yRlzdQ81Pzcb8yMpagr26rNXcd9DYl5XLXZDB9u60ndpFTUhLlETdXdnMicfdrEHtZ2w1_vFgf3J3s8ZFS8kwvOBi-4', available: true },
@@ -24,14 +29,22 @@ const Shop = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Navbar title='Rewards Store'
+        leftNode={<History color={colors.text} size={size.icon} />}
+        rightNode={
+          <TouchableOpacity onPress={() => router.push('/editReward')}>
+            <Plus color={colors.text} size={size.icon} />
+          </TouchableOpacity>
+        }
+      />
       {/* Top App Bar */}
-      <View style={styles.topAppBar}>
-        <View style={styles.leftPlaceholder} />
-        <Text style={styles.title}>Rewards Store</Text>
-        <TouchableOpacity style={styles.historyButton}>
-          <History size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      {/* <View style={styles.topAppBar}> */}
+      {/*   <View style={styles.leftPlaceholder} /> */}
+      {/*   <Text style={styles.title}>Rewards Store</Text> */}
+      {/*   <TouchableOpacity style={styles.historyButton}> */}
+      {/*     <History size={24} color="#fff" /> */}
+      {/*   </TouchableOpacity> */}
+      {/* </View> */}
 
       {/* Points Card */}
       <View style={styles.pointsCard}>
@@ -153,7 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pointsCard: {
-    margin: 16,
+    marginVertical: 16,
     borderRadius: 12,
     backgroundColor: '#2b8cee4d', // 30% opacity of primary color in dark mode
     padding: 16,
@@ -183,7 +196,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchContainer: {
-    paddingHorizontal: 16,
     paddingBottom: 8,
   },
   searchBar: {
@@ -205,7 +217,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   chipScrollView: {
-    paddingHorizontal: 16,
   },
   chipsContainer: {
     flexDirection: 'row',
@@ -238,12 +249,12 @@ const styles = StyleSheet.create({
   rewardsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 16,
     gap: 16,
     paddingBottom: 16,
   },
   rewardCard: {
-    width: (width - 48) / 2, // Two columns with 16px gap and 16px padding
+    // width: "50%"
+    width: (width - 36) / 2, // Two columns with 16px gap and 16px padding
   },
   rewardImage: {
     width: '100%',

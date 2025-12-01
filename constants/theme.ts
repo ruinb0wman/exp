@@ -33,6 +33,7 @@ export const size = {
   eBigIcon: 28,
   // spacing
   spacing: 15,
+  sSpacing: 10,
   smallSpacing: 10,
   bigSpacing: 20,
   eSmallSpacing: 5,

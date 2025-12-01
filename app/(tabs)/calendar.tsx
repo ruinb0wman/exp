@@ -3,7 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import NavBar from '@/components/navBar';
 import CalendarView from "@/components/calendar";
 import { CircleDot, Plus } from 'lucide-react-native';
-import theme from "@/constants/theme";
+import { useTheme } from '@/context/theme';
+import { useRouter } from 'expo-router';
 
 // Define the task data type
 interface Task {
@@ -15,6 +16,8 @@ interface Task {
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string>('September 24');
+  const { colors, size } = useTheme();
+  const router = useRouter();
 
   // Sample tasks for the selected day
   const tasks: Task[] = [
@@ -45,12 +48,12 @@ export default function Calendar() {
       <NavBar title='Calendar'
         leftNode={
           <TouchableOpacity >
-            <CircleDot color={theme.fontColorDark} size={theme.fontSizeBig} />
+            <CircleDot color={colors.text} size={size.icon} />
           </TouchableOpacity>
         }
         rightNode={
-          <TouchableOpacity >
-            <Plus color={theme.fontColorDark} size={theme.fontSizeBig} />
+          <TouchableOpacity onPress={() => router.push('/editTask')}>
+            <Plus color={colors.text} size={size.icon} />
           </TouchableOpacity>
         }
       />
