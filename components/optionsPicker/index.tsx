@@ -11,7 +11,7 @@ type OptionPickerProps = {
   options: Option[];
   value: string | string[]; // 当前选中的 key 或 keys
   multiple?: boolean;
-  onChange: (selectedOptions: Record<string, Option>) => void;
+  onChange?: (selectedOptions: Record<string, Option>) => void;
   containerStyle?: any;
 };
 
@@ -31,6 +31,8 @@ const OptionPicker: React.FC<OptionPickerProps> = ({
   };
 
   const handlePress = (option: Option, index: number) => {
+    if (!onChange) return;
+
     let selectedKeys: string[] = [];
 
     if (multiple) {

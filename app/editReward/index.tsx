@@ -4,6 +4,7 @@ import NavBar from '@/components/navBar';
 import { productTemplates } from "@/db"
 import CustomInput from '@/components/customInput';
 import OptionPicker from '@/components/optionsPicker';
+import * as imagePicker from "expo-image-picker";
 
 const EditRewardScreen = () => {
   const [reward, setReward] = useState<typeof productTemplates.$inferInsert>({
@@ -32,9 +33,10 @@ const EditRewardScreen = () => {
     console.log('Adding product:', reward);
   };
 
-  const handleImageUpload = () => {
+  const handleImageUpload = async () => {
+    const result = await imagePicker.launchImageLibraryAsync();
     // Implementation for image upload
-    console.log('Opening image upload');
+    console.log('Opening image upload', result);
   };
 
   return (

@@ -34,22 +34,6 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Profile Header */}
-      <View style={styles.profileHeader}>
-        <View style={styles.profileInfo}>
-          <Image
-            source={{
-              uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCYX0GCSklgG45NSTT0QWLeiG2EwzkirHDYhCyqHQXRfGNcU-LPiDMN43UY1mPErmqmqUj8i2XaML7xPw3HL3O5wSGXnRW9voAwbp2wq2Oj-GUPOHZfH0m9f2RTiSCFQDa6oXNLqH5g6MD3TR1k5s73e-UDg-8bWV6sjtKl0J45ztBmdnl_LtlknNVqsfmqo7kHcN2wHFPf-d-wv-bmIFcbsQxKbYFyiZ_i9zZIuhSpfCs0XOuolZAo2sRar9qQR7P4BoicwyF8CvQ',
-            }}
-            style={styles.avatar}
-          />
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>Alex Doe</Text>
-            <Text style={styles.userHandle}>@alex_doe</Text>
-          </View>
-        </View>
-      </View>
-
       {/* Points Balance Card */}
       <View style={styles.pointsCard}>
         <View style={styles.pointsCardContent}>
