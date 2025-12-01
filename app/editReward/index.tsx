@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Switch, StyleSheet } from 're
 import NavBar from '@/components/navBar';
 import { productTemplates } from "@/db"
 import CustomInput from '@/components/customInput';
+import OptionPicker from '@/components/optionsPicker';
 
 const EditRewardScreen = () => {
   const [reward, setReward] = useState<typeof productTemplates.$inferInsert>({
@@ -143,27 +144,19 @@ const EditRewardScreen = () => {
         {/* Restock Settings Section */}
         <View style={styles.section}>
           <Text style={styles.label}>Restock Mode</Text>
-          <View style={styles.buttonRow}>
-            {(['none', 'daily', 'weekly', 'monthly'] as const).map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.cycleButton,
-                  reward.replenishmentMode === option && styles.cycleButtonSelected
-                ]}
-                onPress={() => setReward(prev => ({ ...prev, replenishmentMode: option }))}
-              >
-                <Text
-                  style={[
-                    styles.cycleButtonText,
-                    reward.replenishmentMode === option && styles.cycleButtonTextSelected
-                  ]}
-                >
-                  {option.charAt(0).toUpperCase() + option.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <OptionPicker
+            options={[
+              { label: 'None', key: 'none' },
+              { label: 'Daily', key: 'daily' },
+              { label: 'Weekly', key: 'weekly' },
+              { label: 'Monthly', key: 'monthly' },
+            ]}
+            value={reward.replenishmentMode || 'none'}
+            onChange={(selected) => {
+              const selectedKey = Object.keys(selected)[0] || 'none';
+              setReward(prev => ({ ...prev, replenishmentMode: selectedKey as 'none' | 'daily' | 'weekly' | 'monthly' }));
+            }}
+          />
 
           {reward.replenishmentMode === 'daily' && (
             <>
@@ -317,20 +310,6 @@ const styles = StyleSheet.create({
     color: '#ffffff', // white in dark mode
     lineHeight: 20,
     paddingBottom: 8,
-  },
-  input: {
-    height: 56,
-    borderWidth: 1,
-    borderColor: '#334155', // slate-700 dark
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#ffffff', // white in dark mode
-    backgroundColor: '#1e293b', // slate-800 dark
-  },
-  textArea: {
-    height: 144,
-    paddingTop: 15,
   },
   buttonRow: {
     flexDirection: 'row',
