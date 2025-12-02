@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import OptionPicker from '@/components/optionsPicker';
 import CustomInput from '@/components/customInput';
 import Label from '@/components/Label';
 import { useTheme } from '@/context/theme';
+import { useToast } from '@/context/toast';
 
 type Mode = 'none' | 'daily' | 'weekly' | 'monthly';
 
@@ -28,6 +30,63 @@ export default function RestockSettingsSection({
   onDaysOfMonthChange,
 }: Props) {
   const styles = useStyles();
+  const { info } = useToast();
+
+  // 本地状态：用于输入框的受控值
+  const [weeklyInput, setWeeklyInput] = useState(daysOfWeek || '');
+  const [monthlyInput, setMonthlyInput] = useState(daysOfMonth || '');
+
+  // 当外部 props 变化时（如表单重置），同步本地状态
+  useEffect(() => {
+    setWeeklyInput(daysOfWeek || '');
+  }, [daysOfWeek]);
+
+  useEffect(() => {
+    setMonthlyInput(daysOfMonth || '');
+  }, [daysOfMonth]);
+
+  const validateAndSyncWeekly = () => {
+    const text = weeklyInput.trim();
+    if (text === '') {
+      onDaysOfWeekChange(null);
+      return;
+    }
+
+    const parts = text.split(/\s+/).filter(Boolean);
+    for (const part of parts) {
+      const num = Number(part);
+      if (!Number.isInteger(num) || num < 1 || num > 7) {
+        info('Day of week must be integers between 1 and 7 (e.g., "1 3 5")');
+        return;
+      }
+    }
+
+    const normalized = [...new Set(parts.map(Number))].sort((a, b) => a - b).join(' ');
+    onDaysOfWeekChange(normalized);
+    // 可选：同步标准化值回输入框（提升一致性）
+    setWeeklyInput(normalized);
+  };
+
+  const validateAndSyncMonthly = () => {
+    const text = monthlyInput.trim();
+    if (text === '') {
+      onDaysOfMonthChange(null);
+      return;
+    }
+
+    const parts = text.split(/\s+/).filter(Boolean);
+    for (const part of parts) {
+      const num = Number(part);
+      if (!Number.isInteger(num) || num < 1 || num > 31) {
+        info('Day of month must be integers between 1 and 31 (e.g., "1 15")');
+        return;
+      }
+    }
+
+    const normalized = [...new Set(parts.map(Number))].sort((a, b) => a - b).join(' ');
+    onDaysOfMonthChange(normalized);
+    setMonthlyInput(normalized);
+  };
 
   return (
     <View style={styles.container}>
@@ -62,26 +121,24 @@ export default function RestockSettingsSection({
 
       {mode === 'weekly' && (
         <>
-          <Text style={[styles.label, { marginTop: 16 }]}>Days of Week (JSON)</Text>
+          <Text style={[styles.label, { marginTop: 16 }]}>Days of Week</Text>
           <CustomInput
-            placeholder="e.g., [1, 3, 5] (Mon, Wed, Fri)"
-            value={daysOfWeek || ''}
-            onChangeText={(text) =>
-              onDaysOfWeekChange(text || null)
-            }
+            placeholder="e.g., 1 3 5 (Mon=1, Sun=7)"
+            value={weeklyInput}
+            onChangeText={setWeeklyInput}
+            onBlur={validateAndSyncWeekly}
           />
         </>
       )}
 
       {mode === 'monthly' && (
         <>
-          <Text style={[styles.label, { marginTop: 16 }]}>Days of Month (JSON)</Text>
+          <Text style={[styles.label, { marginTop: 16 }]}>Days of Month</Text>
           <CustomInput
-            placeholder="e.g., [1, 15] (1st and 15th)"
-            value={daysOfMonth || ''}
-            onChangeText={(text) =>
-              onDaysOfMonthChange(text || null)
-            }
+            placeholder="e.g., 1 15 (1st and 15th)"
+            value={monthlyInput}
+            onChangeText={setMonthlyInput}
+            onBlur={validateAndSyncMonthly}
           />
         </>
       )}

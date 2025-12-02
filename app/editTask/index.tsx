@@ -1,6 +1,7 @@
 import type { taskTemplates } from "@/db";
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import NavBar from '@/components/navBar';
 import CustomInput from "@/components/customInput";
 import Scheduling from "@/components/Scheduling";
@@ -31,7 +32,10 @@ export default function EditTaskScreen({ id }: Props) {
     <View style={styles.container}>
       <NavBar title="Create Task" back />
 
-      <ScrollView style={styles.mainContent} contentContainerStyle={styles.scrollContent}>
+      <KeyboardAwareScrollView
+        style={styles.mainContent} contentContainerStyle={styles.scrollContent}
+        bottomOffset={16}
+      >
         <Label>Task Name</Label>
         <CustomInput
           placeholder="e.g., Read for 30 minutes"
@@ -73,7 +77,7 @@ export default function EditTaskScreen({ id }: Props) {
           onChange={(isRandomSubtask) => setTask((prev) => ({ ...prev, isRandomSubtask }))}
         /> : null
         }
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <View style={styles.bottomButtonContainer}>
         <TouchableOpacity style={styles.createButton} onPress={handleSave}>
