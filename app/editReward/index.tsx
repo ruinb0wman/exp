@@ -3,23 +3,21 @@ import { View, Text, TouchableOpacity, ScrollView, Switch, StyleSheet } from 're
 import NavBar from '@/components/navBar';
 import { productTemplates } from "@/db"
 import CustomInput from '@/components/customInput';
-import OptionPicker from '@/components/optionsPicker';
+import Scheduling from "@/components/Scheduling";
 import * as imagePicker from "expo-image-picker";
 
 const EditRewardScreen = () => {
   const [reward, setReward] = useState<typeof productTemplates.$inferInsert>({
-    userId: 0, // 需由后端或上下文填充，前端可设为 null
     title: '',
     description: '',
     pointsCost: 0,
-    type: 'consumable' as const, // 默认值来自 schema
+    type: 'consumable', // 默认值来自 schema
     validDuration: 0, // 0 表示永久有效
-    maxPerUser: -1, // -1 表示无限制
     enabled: true,
-    replenishmentMode: 'none' as const,
-    replenishmentInterval: null as number | null, // 仅在 daily 模式下使用
-    replenishmentDaysOfWeek: null as string | null, // JSON 字符串，如 "[1,3]"
-    replenishmentDaysOfMonth: null as string | null, // JSON 字符串，如 "[1,15]"
+    replenishmentMode: 'none',
+    replenishmentInterval: null, // 仅在 daily 模式下使用
+    replenishmentDaysOfWeek: null, // JSON 字符串，如 "[1,3]"
+    replenishmentDaysOfMonth: null, // JSON 字符串，如 "[1,15]"
     createdAt: undefined, // 通常由数据库自动生成
   });
 
@@ -134,66 +132,26 @@ const EditRewardScreen = () => {
             />
           </View>
 
-          <Text style={[styles.label, { marginTop: 16 }]}>Max Per User</Text>
-          <CustomInput
-            placeholder="e.g., -1 (no limit), 1, 5"
-            value={reward.maxPerUser?.toString()}
-            onChangeText={(maxPerUser) => setReward(prev => ({ ...prev, maxPerUser: parseInt(maxPerUser) || -1 }))}
-            keyboardType="numeric"
-          />
         </View>
 
-        {/* Restock Settings Section */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Restock Mode</Text>
-          <OptionPicker
-            options={[
-              { label: 'None', key: 'none' },
-              { label: 'Daily', key: 'daily' },
-              { label: 'Weekly', key: 'weekly' },
-              { label: 'Monthly', key: 'monthly' },
-            ]}
-            value={reward.replenishmentMode || 'none'}
-            onChange={(selected) => {
-              const selectedKey = Object.keys(selected)[0] || 'none';
-              setReward(prev => ({ ...prev, replenishmentMode: selectedKey as 'none' | 'daily' | 'weekly' | 'monthly' }));
-            }}
-          />
-
-          {reward.replenishmentMode === 'daily' && (
-            <>
-              <Text style={[styles.label, { marginTop: 16 }]}>Restock Interval (days)</Text>
-              <CustomInput
-                placeholder="e.g., 1 (every 1 day)"
-                value={reward.replenishmentInterval?.toString() || ''}
-                onChangeText={(replenishmentInterval) => setReward(prev => ({ ...prev, replenishmentInterval: replenishmentInterval ? parseInt(replenishmentInterval) : null }))}
-                keyboardType="numeric"
-              />
-            </>
-          )}
-
-          {reward.replenishmentMode === 'weekly' && (
-            <>
-              <Text style={[styles.label, { marginTop: 16 }]}>Days of Week (JSON)</Text>
-              <CustomInput
-                placeholder="e.g., [1, 3, 5] (Mon, Wed, Fri)"
-                value={reward.replenishmentDaysOfWeek || ''}
-                onChangeText={(replenishmentDaysOfWeek) => setReward(prev => ({ ...prev, replenishmentDaysOfWeek: replenishmentDaysOfWeek || null }))}
-              />
-            </>
-          )}
-
-          {reward.replenishmentMode === 'monthly' && (
-            <>
-              <Text style={[styles.label, { marginTop: 16 }]}>Days of Month (JSON)</Text>
-              <CustomInput
-                placeholder="e.g., [1, 15] (1st and 15th)"
-                value={reward.replenishmentDaysOfMonth || ''}
-                onChangeText={(replenishmentDaysOfMonth) => setReward(prev => ({ ...prev, replenishmentDaysOfMonth: replenishmentDaysOfMonth || null }))}
-              />
-            </>
-          )}
-        </View>
+        <Scheduling
+          replenishmentMode={reward.replenishmentMode || 'none'}
+          replenishmentInterval={reward.replenishmentInterval || 0}
+          replenishmentDaysOfWeek={reward.replenishmentDaysOfWeek || ''}
+          replenishmentDaysOfMonth={reward.replenishmentDaysOfMonth || ''}
+          onReplenishmentModeChange={(mode) =>
+            setReward((prev) => ({ ...prev, replenishmentMode: mode }))
+          }
+          onReplenishmentIntervalChange={(interval) =>
+            setReward((prev) => ({ ...prev, replenishmentInterval: interval }))
+          }
+          onReplenishmentDaysOfWeekChange={(days) =>
+            setReward((prev) => ({ ...prev, replenishmentDaysOfWeek: days }))
+          }
+          onReplenishmentDaysOfMonthChange={(days) =>
+            setReward((prev) => ({ ...prev, replenishmentDaysOfMonth: days }))
+          }
+        />
 
         {/* Spacer to push button to bottom */}
         <View style={styles.flexGrow} />

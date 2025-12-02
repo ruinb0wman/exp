@@ -1,112 +1,86 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, TextInput } from "react-native";
-// Define types
-interface Subtask {
-  id: string;
-  text: string;
-  completed: boolean;
+import { useTheme } from "@/context/theme";
+import { CircleX } from "lucide-react-native";
+
+interface SubtaskProps {
+  value: string[];
+  onChange?: (newValues: string[]) => void;
 }
 
-export default function Subtask() {
-  const [subtasks, setSubtasks] = useState<Subtask[]>([
-    { id: '1', text: 'Read Chapter 1', completed: true },
-  ]);
+export default function Subtask({ value, onChange }: SubtaskProps) {
   const [newSubtaskText, setNewSubtaskText] = useState('');
+  const { colors, size } = useTheme();
+  const styles = useStyles();
 
   const addSubtask = () => {
     if (newSubtaskText.trim()) {
-      const newSubtask: Subtask = {
-        id: Date.now().toString(),
-        text: newSubtaskText.trim(),
-        completed: false,
-      };
-      setSubtasks([...subtasks, newSubtask]);
+      const updated = [...value, newSubtaskText.trim()];
+      onChange && onChange(updated);
       setNewSubtaskText('');
     }
   };
 
-  const toggleSubtask = (id: string) => {
-    setSubtasks(subtasks.map(subtask =>
-      subtask.id === id ? { ...subtask, completed: !subtask.completed } : subtask
-    ));
+  const updateSubtask = (index: number, text: string) => {
+    const updated = [...value];
+    updated[index] = text;
+    onChange && onChange(updated);
   };
 
-  const deleteSubtask = (id: string) => {
-    setSubtasks(subtasks.filter(subtask => subtask.id !== id));
+  const deleteSubtask = (index: number) => {
+    const updated = value.filter((_, i) => i !== index);
+    onChange && onChange(updated);
   };
+
   return (
-    < View >
-      <View >
-        <View style={styles.subtaskRow}>
-          <Text style={styles.radioButton}>{newSubtaskText ? '○' : '○'}</Text>
+    <View>
+      {/* Add new subtask */}
+      <View style={styles.subtaskRow}>
+        <TextInput
+          style={styles.subtaskInput}
+          placeholder="Add a subtask"
+          placeholderTextColor={colors.placeholder}
+          value={newSubtaskText}
+          onChangeText={setNewSubtaskText}
+          onEndEditing={addSubtask}
+          onSubmitEditing={addSubtask}
+        />
+      </View>
+
+      {/* Render existing subtasks */}
+      {value.map((text, index) => (
+        <View key={index} style={styles.subtaskRow}>
           <TextInput
             style={styles.subtaskInput}
-            placeholder="Add a subtask"
-            value={newSubtaskText}
-            onChangeText={setNewSubtaskText}
-            onEndEditing={addSubtask}
+            value={text}
+            onChangeText={(newText) => updateSubtask(index, newText)}
           />
+          <TouchableOpacity onPress={() => deleteSubtask(index)}>
+            <CircleX size={size.icon} color={colors.dimText} />
+          </TouchableOpacity>
         </View>
-
-        {subtasks.map((subtask) => (
-          <View key={subtask.id} style={[styles.subtaskRow, subtask.completed ? styles.completedSubtask : null]}>
-            <TouchableOpacity onPress={() => toggleSubtask(subtask.id)}>
-              <Text style={styles.checkCircle}>
-                {subtask.completed ? '●' : '○'}
-              </Text>
-            </TouchableOpacity>
-            <TextInput
-              style={[styles.subtaskInput, subtask.completed ? styles.completedText : null]}
-              value={subtask.text}
-              onChangeText={(text) => {
-                setSubtasks(subtasks.map(s =>
-                  s.id === subtask.id ? { ...s, text } : s
-                ));
-              }}
-              editable={!subtask.completed}
-            />
-            <TouchableOpacity onPress={() => deleteSubtask(subtask.id)}>
-              <Text style={styles.deleteIcon}>🗑️</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-    </View >
-  )
+      ))}
+    </View>
+  );
 }
-const styles = StyleSheet.create({
-  subtaskRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    minHeight: 40,
-  },
-  completedSubtask: {
-    opacity: 0.6,
-  },
-  radioButton: {
-    fontSize: 24,
-    color: '#94a3b8', // dark:text-slate-400
-  },
-  checkCircle: {
-    fontSize: 24,
-    color: '#94a3b8', // dark:text-slate-400
-  },
-  subtaskInput: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: 'normal',
-    lineHeight: 16,
-    color: '#ffffff', // dark:text-white
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-    padding: 0,
-  },
-  completedText: {
-    textDecorationLine: 'line-through',
-  },
-  deleteIcon: {
-    color: '#94a3b8', // dark:text-slate-400
-    fontSize: 20,
-  },
-});
+
+function useStyles() {
+  const { colors } = useTheme();
+
+  return StyleSheet.create({
+    subtaskRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      minHeight: 40,
+    },
+    subtaskInput: {
+      flex: 1,
+      fontSize: 16,
+      color: '#ffffff',
+      borderBottomWidth: 2,
+      borderBottomColor: 'transparent',
+      padding: 0,
+    },
+  });
+}

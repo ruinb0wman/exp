@@ -6,11 +6,6 @@ const CustomInput = (props: TextInputProps) => {
   const { colors } = useTheme();
   const styles = useStyles();
   return (
-    // <TextInput
-    //   {...props}
-    //   placeholderTextColor={colors.placeholder}
-    //   style={[{ color: colors.text }, props.style]}
-    // />
     <TextInput
       style={[styles.input, props.style, props.multiline && styles.textArea]}
       placeholderTextColor={colors.placeholder}

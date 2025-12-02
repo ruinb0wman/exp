@@ -2,8 +2,6 @@ import { taskTemplates } from "@/db";
 
 export function getEmptyTaskTemplates(): typeof taskTemplates.$inferInsert {
   return {
-    id: 0,
-    userId: 0,
     title: '',
     rewardPoints: 10,
     repeatMode: 'none',
@@ -14,5 +12,7 @@ export function getEmptyTaskTemplates(): typeof taskTemplates.$inferInsert {
     repeatDaysOfMonth: null,
     endValue: null,
     enabled: true,
+    subtasks: [],
+    isRandomSubtask: false,
   };
 }

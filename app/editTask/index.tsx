@@ -1,12 +1,13 @@
 import type { taskTemplates } from "@/db";
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Switch } from 'react-native';
 import { getEmptyTaskTemplates } from "./lib"
 import { useCustomState } from "@/hooks/state";
+import { useTheme } from "@/context/theme";
 import NavBar from '@/components/navBar';
 import CustomInput from "@/components/customInput";
+import Scheduling from "@/components/Scheduling"
 import RewardPoint from "./components/rewardPoint";
-import Scheduling from "./components/scheduling";
 import Subtask from "./components/subTask";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 
 export default function EditTaskScreen({ id }: Props) {
   const [task, setTask, updateTask] = useCustomState<typeof taskTemplates.$inferInsert>(getEmptyTaskTemplates());
+  const { colors, size } = useTheme();
 
   useEffect(() => {
     if (!id) return;
@@ -22,6 +24,10 @@ export default function EditTaskScreen({ id }: Props) {
     // getTask();
     // setTask();
   })
+
+  const handleSave = () => {
+    console.log('task', task);
+  }
 
   return (
     <View style={styles.container}>
@@ -44,17 +50,43 @@ export default function EditTaskScreen({ id }: Props) {
           textAlignVertical="top"
         />
         <RewardPoint value={task.rewardPoints} onChange={(rewardPoints) => setTask((prev) => ({ ...prev, rewardPoints }))} />
-        {/* Scheduling Section Card */}
-        <Text style={styles.inputLabel}>Scheduling</Text>
-        <Scheduling type={task.repeatMode} />
+
+        <Scheduling
+          replenishmentMode={task.repeatMode || 'none'}
+          replenishmentInterval={task.repeatInterval || 0}
+          replenishmentDaysOfWeek={task.repeatDaysOfWeek || ''}
+          replenishmentDaysOfMonth={task.repeatDaysOfMonth || ''}
+          onReplenishmentModeChange={(repeatMode) =>
+            setTask((prev) => ({ ...prev, repeatMode }))
+          }
+          onReplenishmentIntervalChange={(repeatInterval) =>
+            setTask((prev) => ({ ...prev, repeatInterval }))
+          }
+          onReplenishmentDaysOfWeekChange={(repeatDaysOfWeek) =>
+            setTask((prev) => ({ ...prev, repeatDaysOfWeek }))
+          }
+          onReplenishmentDaysOfMonthChange={(repeatDaysOfMonth) =>
+            setTask((prev) => ({ ...prev, repeatDaysOfMonth }))
+          }
+        />
+
         {/* subTask section */}
         <Text style={styles.inputLabel}>Subtask</Text>
-        <Subtask />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={styles.inputLabel}>Random</Text>
+          <Switch
+            value={task.isRandomSubtask}
+            onValueChange={(isRandomSubtask) => setTask(prev => ({ ...prev, isRandomSubtask }))}
+            trackColor={{ false: colors.fill, true: colors.primary }}
+            thumbColor={task.isRandomSubtask ? colors.text : colors.dimText}
+          />
+        </View>
+        <Subtask value={task.subtasks || []} onChange={(subtasks) => setTask((prev) => ({ ...prev, subtasks }))} />
       </ScrollView>
 
       {/* Bottom CTA Button */}
       <View style={styles.bottomButtonContainer}>
-        <TouchableOpacity style={styles.createButton}>
+        <TouchableOpacity style={styles.createButton} onPress={handleSave}>
           <Text style={styles.createButtonText}>Create Task</Text>
         </TouchableOpacity>
       </View>
@@ -65,6 +97,7 @@ export default function EditTaskScreen({ id }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 100,
   },
   topAppBar: {
     flexDirection: 'row',
