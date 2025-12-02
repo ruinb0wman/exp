@@ -13,6 +13,9 @@ export default function TabLayout() {
       tabBarStyle: {
         backgroundColor: colors.background,
         borderColor: colors.border,
+      },
+      sceneStyle: {
+        backgroundColor: colors.background,
       }
     }}>
       <Tabs.Screen name="index" options={{ title: 'Task', tabBarIcon: ({ color }) => <CircleCheck color={color} /> }} />

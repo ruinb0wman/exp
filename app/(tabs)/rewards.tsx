@@ -14,6 +14,7 @@ const Shop = () => {
   const { colors, size } = useTheme();
   const router = useRouter();
 
+
   const rewards = [
     { id: 1, name: '1-Month Streaming', points: '500 PTS', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAKa4TzRKo6waxNjMh_IKTuwH0zVZ6HpSFavjgMfjrxVU4pWJiSOH4nJMV_FK9cpa52OW-HJZVY5m8RpjF7Dmn8MrgksQ5pG768K97XEDZF_Im0Cs6yPcqkTqIWbUZiPAj9yO5niOzC9yyaU29iOzarbx3vF5RvwGouDU8qNEJMt3yMUuP4yRlzdQ81Pzcb8yMpagr26rNXcd9DYl5XLXZDB9u60ndpFTUhLlETdXdnMicfdrEHtZ2w1_vFgf3J3s8ZFS8kwvOBi-4', available: true },
     { id: 2, name: 'Premium App Access', points: '800 PTS', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB4fmkxKwFfRMdAjBbS1IbiJczWCG_exP3Vlqak1duEG91qgST090fNugzkOLUgcFt4CHGvlXzyrSv3nwruiJBbuiPNlhqclbvVd8yeT3zRubHaNuGwBf-j9njt7F4EK9MpWeCR6QgosmjRFVOT1hsRgfxhRO6gbtIB7vDO98R-zlMldgIql3_RCk7Vq2UVI-2-P1YQxF73vLxVHBNuawIDT5BNph9C1COEHUuO1Aa2JiDFG7AOdH-NzYUoEaDHjwnFNmwQyWMPRJ4', available: true },
@@ -28,7 +29,7 @@ const Shop = () => {
   const chips = ['All', 'Digital', 'Physical', 'Experiences', 'Donations'];
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Navbar title='Rewards Store'
         leftNode={<History color={colors.text} size={size.icon} />}
         rightNode={
@@ -37,133 +38,95 @@ const Shop = () => {
           </TouchableOpacity>
         }
       />
-      {/* Top App Bar */}
-      {/* <View style={styles.topAppBar}> */}
-      {/*   <View style={styles.leftPlaceholder} /> */}
-      {/*   <Text style={styles.title}>Rewards Store</Text> */}
-      {/*   <TouchableOpacity style={styles.historyButton}> */}
-      {/*     <History size={24} color="#fff" /> */}
-      {/*   </TouchableOpacity> */}
-      {/* </View> */}
-
-      {/* Points Card */}
-      <View style={styles.pointsCard}>
-        <View style={styles.pointsCardContent}>
-          <View>
-            <Text style={styles.yourPointsText}>Your Points</Text>
-            <Text style={styles.pointsText}>1,250 PTS</Text>
-          </View>
-          <View style={styles.premiumIconContainer}>
-            <Star size={32} color="#fff" fill="#fff" />
+      <ScrollView >
+        {/* Points Card */}
+        <View style={styles.pointsCard}>
+          <View style={styles.pointsCardContent}>
+            <View>
+              <Text style={styles.yourPointsText}>Your Points</Text>
+              <Text style={styles.pointsText}>1,250 PTS</Text>
+            </View>
+            <View style={styles.premiumIconContainer}>
+              <Star size={32} color="#fff" fill="#fff" />
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Search size={20} color="#9ca3af" style={styles.searchIcon} />
-          <CustomInput
-            style={styles.searchInput}
-            placeholder="Search for rewards"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Search size={20} color="#9ca3af" style={styles.searchIcon} />
+            <CustomInput
+              style={styles.searchInput}
+              placeholder="Search for rewards"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
         </View>
-      </View>
 
-      {/* Chips */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScrollView}>
-        <View style={styles.chipsContainer}>
-          {chips.map((chip) => (
-            <TouchableOpacity
-              key={chip}
-              style={[
-                styles.chip,
-                selectedChip === chip ? styles.selectedChip : styles.unselectedChip
-              ]}
-              onPress={() => setSelectedChip(chip)}
-            >
-              <Text
+        {/* Chips */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScrollView}>
+          <View style={styles.chipsContainer}>
+            {chips.map((chip) => (
+              <TouchableOpacity
+                key={chip}
                 style={[
-                  styles.chipText,
-                  selectedChip === chip ? styles.selectedChipText : styles.unselectedChipText
+                  styles.chip,
+                  selectedChip === chip ? styles.selectedChip : styles.unselectedChip
                 ]}
+                onPress={() => setSelectedChip(chip)}
               >
-                {chip}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.chipText,
+                    selectedChip === chip ? styles.selectedChipText : styles.unselectedChipText
+                  ]}
+                >
+                  {chip}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Rewards Grid */}
+        <View style={styles.rewardsGrid}>
+          {rewards.map((reward) => (
+            <View key={reward.id} style={styles.rewardCard}>
+              <Image
+                source={{ uri: reward.image }}
+                style={[
+                  styles.rewardImage,
+                  !reward.available && styles.rewardImageDisabled
+                ]}
+                resizeMode="cover"
+              />
+              <View style={styles.rewardInfo}>
+                <Text style={[
+                  styles.rewardName,
+                  !reward.available && styles.rewardTextDisabled
+                ]}>
+                  {reward.name}
+                </Text>
+                <Text style={[
+                  styles.rewardPoints,
+                  !reward.available && styles.rewardTextDisabled
+                ]}>
+                  {reward.points}
+                </Text>
+              </View>
+            </View>
           ))}
         </View>
       </ScrollView>
-
-      {/* Rewards Grid */}
-      <View style={styles.rewardsGrid}>
-        {rewards.map((reward) => (
-          <View key={reward.id} style={styles.rewardCard}>
-            <Image
-              source={{ uri: reward.image }}
-              style={[
-                styles.rewardImage,
-                !reward.available && styles.rewardImageDisabled
-              ]}
-              resizeMode="cover"
-            />
-            <View style={styles.rewardInfo}>
-              <Text style={[
-                styles.rewardName,
-                !reward.available && styles.rewardTextDisabled
-              ]}>
-                {reward.name}
-              </Text>
-              <Text style={[
-                styles.rewardPoints,
-                !reward.available && styles.rewardTextDisabled
-              ]}>
-                {reward.points}
-              </Text>
-            </View>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101922',
-  },
-  topAppBar: {
-    backgroundColor: '#101922',
-    paddingTop: 40,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 10,
-  },
-  leftPlaceholder: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    flex: 1,
-  },
-  historyButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#333',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   pointsCard: {
     marginVertical: 16,
@@ -253,8 +216,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   rewardCard: {
-    // width: "50%"
-    width: (width - 36) / 2, // Two columns with 16px gap and 16px padding
+    width: (width - 46) / 2, // Two columns with 16px gap and 16px padding
   },
   rewardImage: {
     width: '100%',

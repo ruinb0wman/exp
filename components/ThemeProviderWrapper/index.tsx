@@ -9,7 +9,7 @@ export default function ThemeProviderWrapper() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <StatusBar />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background, padding: size.sSpacing } }} >
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background, padding: size.spacing } }} >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </SafeAreaView>

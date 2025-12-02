@@ -24,7 +24,7 @@ export default function NavBar({ leftNode, rightNode, back, title }: Props) {
         }}>
           <ChevronLeft color={colors.text} size={size.icon} />
         </TouchableOpacity> :
-        leftNode ? leftNode : null
+        leftNode ? leftNode : <View />
       }
       {title && <Text style={styles.title}>{title}</Text>}
       {rightNode}

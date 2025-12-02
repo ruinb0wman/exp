@@ -1,13 +1,11 @@
 import { sqliteTable, text, integer, index, primaryKey } from "drizzle-orm/sqlite-core";
 import { sql } from 'drizzle-orm';
-import { users } from "./users";
 
 // ======================
 // 任务模板表 —— 定义任务规则（不直接执行）
 // ======================
 export const taskTemplates = sqliteTable('task_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 
   title: text('title').notNull(),       // 任务名称
   description: text('description'),     // 任务描述
@@ -41,7 +39,6 @@ export const taskTemplates = sqliteTable('task_templates', {
 export const taskInstances = sqliteTable('task_instances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   templateId: integer('template_id').notNull().references(() => taskTemplates.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 
   // 实例对应的日期（00:00:00 UTC 时间戳，仅日期维度）
   scheduledDate: integer('scheduled_date', { mode: 'timestamp' }).notNull(),
@@ -53,8 +50,6 @@ export const taskInstances = sqliteTable('task_instances', {
   awardedPoints: integer('awarded_points').notNull(),          // 快照：防止模板修改影响历史
 
 }, (table) => ({
-  // 联合索引：快速查询某用户某天的任务
-  userDateIdx: index('task_instance_user_date_idx').on(table.userId, table.scheduledDate),
   // 防止同一模板同一天重复生成
   uniqueTemplateDate: index('task_instance_template_date_unique')
     .on(table.templateId, table.scheduledDate),

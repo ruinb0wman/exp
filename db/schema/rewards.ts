@@ -1,13 +1,11 @@
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { sql } from 'drizzle-orm';
-import { users } from "./users";
 
 // ======================
 // 商品模板表 —— 定义可兑换商品的规则
 // ======================
 export const productTemplates = sqliteTable('product_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 
   title: text('title').notNull(),
   description: text('description'),
@@ -18,9 +16,6 @@ export const productTemplates = sqliteTable('product_templates', {
 
   // 兑换后有效时长（毫秒），0 表示永久有效
   validDuration: integer('valid_duration').notNull().default(0),
-
-  // 每人最多可持有数量（-1 表示无限制）
-  maxPerUser: integer('max_per_user').notNull().default(-1),
 
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true), // 是否可兑换
 
@@ -45,7 +40,6 @@ export const productTemplates = sqliteTable('product_templates', {
 export const productInstances = sqliteTable('product_instances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   templateId: integer('template_id').notNull().references(() => productTemplates.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 
   // 状态：
   // - available: 可使用
@@ -60,6 +54,4 @@ export const productInstances = sqliteTable('product_instances', {
   // 扩展数据：存储唯一码、批次号等（JSON 字符串）
   metadata: text('metadata'), // e.g. '{"code":"XYZ789","store":"Cafe"}'
 
-}, (table) => ({
-  userStatusIdx: index('product_instance_user_status_idx').on(table.userId, table.status),
-}));
+});

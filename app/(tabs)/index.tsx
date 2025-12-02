@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { router } from "expo-router";
-import { useUser } from "@/store/user";
 import { useCallback } from "react";
 import { useDbContext } from "@/context/db";
 import { useFocusEffect } from "@react-navigation/native";
@@ -18,7 +17,6 @@ export interface Task {
 }
 
 export default function Index() {
-  const { users, setUsers } = useUser();
   const { canUseDB } = useDbContext();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskDetailVisible, setIsTaskDetailVisible] = useState(false);
@@ -27,7 +25,6 @@ export default function Index() {
     useCallback(() => {
       console.log('in', canUseDB, performance.now());
       if (!canUseDB) return;
-      setUsers();
     }, [canUseDB]))
 
   // Sample tasks data
@@ -52,13 +49,9 @@ export default function Index() {
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.userSection}>
-            <Image
-              source={{ uri: userProfile.avatar }}
-              style={styles.avatar}
-            />
             <View style={styles.userInfo}>
+              <Text style={styles.userName}>Exp</Text>
               <Text style={styles.greeting}>Good Morning!</Text>
-              <Text style={styles.userName}>{userProfile.name}</Text>
             </View>
           </View>
 
@@ -125,11 +118,8 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101922', // Dark background
   },
   content: {
-    padding: 16,
-    paddingTop: 50,
     paddingBottom: 50, // Extra padding to account for bottom nav
   },
   header: {

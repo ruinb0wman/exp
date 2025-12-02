@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import NavBar from '@/components/navBar';
+import { Settings } from 'lucide-react-native';
+import { useTheme } from '@/context/theme';
 
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = () => {
+  const { colors, size } = useTheme();
+
   const recentActivities = [
     { id: 1, icon: 'menu_book', title: 'Read a chapter', time: 'Completed today', points: '+10', color: 'green' },
     { id: 2, icon: 'coffee', title: 'Redeemed \'Coffee\'', time: '2 days ago', points: '-50', color: 'red' },
@@ -24,67 +29,61 @@ const ProfileScreen = () => {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Top AppBar */}
-      <View style={styles.topAppBar}>
-        <View style={styles.emptySpace} />
-        <Text style={styles.appBarTitle}>My Profile</Text>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Text style={styles.settingsIcon}>⚙️</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Points Balance Card */}
-      <View style={styles.pointsCard}>
-        <View style={styles.pointsCardContent}>
-          <Text style={styles.pointsLabel}>CURRENT BALANCE</Text>
-          <Text style={styles.pointsValue}>1,250</Text>
-          <View style={styles.pointsFooter}>
-            <Text style={styles.pointsMessage}>Well done! Keep up the great work.</Text>
+    <View style={styles.container}>
+      <NavBar title="My Profile" rightNode={<Settings color={colors.text} size={size.icon} />} />
+      <ScrollView >
+        {/* Points Balance Card */}
+        <View style={styles.pointsCard}>
+          <View style={styles.pointsCardContent}>
+            <Text style={styles.pointsLabel}>CURRENT BALANCE</Text>
+            <Text style={styles.pointsValue}>1,250</Text>
+            <View style={styles.pointsFooter}>
+              <Text style={styles.pointsMessage}>Well done! Keep up the great work.</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* Quick Action Buttons */}
-      <View style={styles.quickActionsContainer}>
-        {quickActions.map((action, index) => (
-          <View key={index} style={styles.quickActionItem}>
-            <Text style={styles.quickActionIcon}>🎒</Text>
-            <Text style={styles.quickActionText}>{action.title}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Progress Stats Section */}
-      <Text style={styles.sectionTitle}>Progress Stats</Text>
-      <View style={styles.statsContainer}>
-        {stats.map((stat, index) => (
-          <View key={index} style={styles.statItem}>
-            <Text style={styles.statLabel}>{stat.label}</Text>
-            <Text style={styles.statValue}>{stat.value}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Recent Activity */}
-      <Text style={styles.sectionTitle}>Recent Activity</Text>
-      <View style={styles.activityContainer}>
-        {recentActivities.map((activity) => (
-          <View key={activity.id} style={styles.activityItem}>
-            <View style={[styles.activityIcon, { backgroundColor: '#2b8cee20' }]}>
-              <Text style={[styles.iconText, { color: '#2b8cee' }]}>📚</Text>
+        {/* Quick Action Buttons */}
+        <View style={styles.quickActionsContainer}>
+          {quickActions.map((action, index) => (
+            <View key={index} style={styles.quickActionItem}>
+              <Text style={styles.quickActionIcon}>🎒</Text>
+              <Text style={styles.quickActionText}>{action.title}</Text>
             </View>
-            <View style={styles.activityDetails}>
-              <Text style={styles.activityTitle}>{activity.title}</Text>
-              <Text style={styles.activityTime}>{activity.time}</Text>
+          ))}
+        </View>
+
+        {/* Progress Stats Section */}
+        <Text style={styles.sectionTitle}>Progress Stats</Text>
+        <View style={styles.statsContainer}>
+          {stats.map((stat, index) => (
+            <View key={index} style={styles.statItem}>
+              <Text style={styles.statLabel}>{stat.label}</Text>
+              <Text style={styles.statValue}>{stat.value}</Text>
             </View>
-            <Text style={[styles.activityPoints, { color: activity.color === 'green' ? '#2ecc71' : '#e74c3c' }]}>
-              {activity.points}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+          ))}
+        </View>
+
+        {/* Recent Activity */}
+        <Text style={styles.sectionTitle}>Recent Activity</Text>
+        <View style={styles.activityContainer}>
+          {recentActivities.map((activity) => (
+            <View key={activity.id} style={styles.activityItem}>
+              <View style={[styles.activityIcon, { backgroundColor: '#2b8cee20' }]}>
+                <Text style={[styles.iconText, { color: '#2b8cee' }]}>📚</Text>
+              </View>
+              <View style={styles.activityDetails}>
+                <Text style={styles.activityTitle}>{activity.title}</Text>
+                <Text style={styles.activityTime}>{activity.time}</Text>
+              </View>
+              <Text style={[styles.activityPoints, { color: activity.color === 'green' ? '#2ecc71' : '#e74c3c' }]}>
+                {activity.points}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
