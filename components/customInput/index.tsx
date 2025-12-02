@@ -15,21 +15,20 @@ const CustomInput = (props: TextInputProps) => {
 };
 
 function useStyles() {
-  const { colors } = useTheme();
+  const { colors, size } = useTheme();
   return StyleSheet.create({
     input: {
-      height: 56,
       borderWidth: 1,
-      borderColor: '#334155',
-      borderRadius: 8,
-      paddingHorizontal: 15,
-      fontSize: 16,
+      borderColor: colors.lightBorder,
+      borderRadius: size.lRadius,
+      paddingHorizontal: size.spacing,
+      fontSize: size.text,
       color: colors.text,
-      backgroundColor: '#1e293b',
+      backgroundColor: colors.fill,
     },
     textArea: {
       height: 144,
-      paddingTop: 15,
+      paddingTop: size.spacing,
     }
   })
 }

@@ -5,21 +5,10 @@ import { productTemplates } from "@/db"
 import CustomInput from '@/components/customInput';
 import Scheduling from "@/components/Scheduling";
 import * as imagePicker from "expo-image-picker";
+import { getEmptyProduct } from "./lib"
 
 const EditRewardScreen = () => {
-  const [reward, setReward] = useState<typeof productTemplates.$inferInsert>({
-    title: '',
-    description: '',
-    pointsCost: 0,
-    type: 'consumable', // 默认值来自 schema
-    validDuration: 0, // 0 表示永久有效
-    enabled: true,
-    replenishmentMode: 'none',
-    replenishmentInterval: null, // 仅在 daily 模式下使用
-    replenishmentDaysOfWeek: null, // JSON 字符串，如 "[1,3]"
-    replenishmentDaysOfMonth: null, // JSON 字符串，如 "[1,15]"
-    createdAt: undefined, // 通常由数据库自动生成
-  });
+  const [reward, setReward] = useState<typeof productTemplates.$inferInsert>(getEmptyProduct());
 
   const handleSave = () => {
     // Implementation for saving the reward
@@ -65,7 +54,6 @@ const EditRewardScreen = () => {
             placeholder="Enter product name"
             value={reward.title}
             onChangeText={(title) => setReward(prev => ({ ...prev, title }))}
-            placeholderTextColor="#9ca3af"
           />
 
           <Text style={styles.label}>Description</Text>

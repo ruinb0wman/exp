@@ -1,4 +1,6 @@
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { Star } from "lucide-react-native";
+import Label from "@/components/Label"
 
 interface Props {
   onChange?: (val: number) => void
@@ -9,12 +11,12 @@ export default function RewardPoint({ onChange, value }: Props) {
 
   return (
     <View style={styles.pointsRow}>
-      <View style={styles.pointsLeft}>
-        <View style={styles.rewardIcon}>
-          <Text style={styles.rewardIconText}>⭐</Text>
-        </View>
-        <Text style={styles.pointsLabel}>Reward Points</Text>
-      </View>
+      <Label leftNode={
+        <Star color="#facc15" />
+      }>Reward Points</Label>
+      {/* <View style={styles.pointsLeft}> */}
+      {/*   <Text style={styles.pointsLabel}>Reward Points</Text> */}
+      {/* </View> */}
       <View style={styles.pointsControls}>
         <TouchableOpacity
           style={styles.pointsButton}
@@ -50,14 +52,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-  },
-  rewardIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: 'rgba(250, 204, 21, 0.2)', // bg-yellow-400/20
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   rewardIconText: {
     color: '#facc15', // text-yellow-400

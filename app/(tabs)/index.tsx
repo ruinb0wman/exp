@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Plus } from 'lucide-react-native';
 import { router } from "expo-router";
 import { useCallback } from "react";
 import { useDbContext } from "@/context/db";
 import { useFocusEffect } from "@react-navigation/native";
 import TaskDetail from '@/components/taskDetail';
 import TaskCard from '@/components/taskCard';
-import { Plus } from 'lucide-react-native';
+import Label from '@/components/Label';
 
 export interface Task {
   id: number;

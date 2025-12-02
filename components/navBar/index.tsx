@@ -14,6 +14,7 @@ interface Props {
 export default function NavBar({ leftNode, rightNode, back, title }: Props) {
   const { colors, size } = useTheme();
   const router = useRouter();
+  const styles = useStyles();
 
   return (
     <View style={styles.topAppBar}>
@@ -24,40 +25,31 @@ export default function NavBar({ leftNode, rightNode, back, title }: Props) {
         }}>
           <ChevronLeft color={colors.text} size={size.icon} />
         </TouchableOpacity> :
-        leftNode ? leftNode : <View />
+        leftNode ? leftNode : <View style={{ width: size.icon }} />
       }
       {title && <Text style={styles.title}>{title}</Text>}
-      {rightNode}
+      {rightNode ? rightNode : <View style={{ width: size.icon }} />}
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  topAppBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    paddingBottom: 8,
-    backgroundColor: '#101922', // background-dark
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-  },
-  icon: {
-    fontSize: 24,
-    color: '#FFFFFF',
-  },
-  addButton: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
+function useStyles() {
+  const { colors, size } = useTheme();
+
+  return StyleSheet.create({
+    topAppBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: size.smallSpacing,
+      paddingBottom: size.spacing,
+      justifyContent: 'space-between'
+    },
+    title: {
+      fontSize: size.bigText,
+      fontWeight: 'bold',
+      color: colors.text,
+    },
+  })
+}
+
+

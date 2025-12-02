@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from "react-native";
+import { View, TouchableOpacity, StyleSheet, TextInput } from "react-native";
 import { useTheme } from "@/context/theme";
 import { CircleX } from "lucide-react-native";
 
@@ -33,9 +33,9 @@ export default function Subtask({ value, onChange }: SubtaskProps) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* Add new subtask */}
-      <View style={styles.subtaskRow}>
+      <View style={[styles.subtaskRow, value.length ? styles.addTaskRow : null]}>
         <TextInput
           style={styles.subtaskInput}
           placeholder="Add a subtask"
@@ -65,9 +65,21 @@ export default function Subtask({ value, onChange }: SubtaskProps) {
 }
 
 function useStyles() {
-  const { colors } = useTheme();
+  const { colors, size } = useTheme();
 
   return StyleSheet.create({
+    container: {
+      borderWidth: 1,
+      borderColor: colors.lightBorder,
+      borderRadius: 8,
+      paddingHorizontal: 15,
+      backgroundColor: colors.fill,
+    },
+    addTaskRow: {
+      borderBottomWidth: 1,
+      borderColor: colors.lightBorder,
+      marginBottom: size.smallSpacing
+    },
     subtaskRow: {
       flexDirection: 'row',
       alignItems: 'center',

@@ -20,7 +20,6 @@ const OptionPicker: React.FC<OptionPickerProps> = ({
   value,
   multiple = false,
   onChange,
-  containerStyle,
 }) => {
   // 判断某个 option 是否被选中
   const isSelected = (key: string): boolean => {
@@ -60,7 +59,7 @@ const OptionPicker: React.FC<OptionPickerProps> = ({
   };
 
   return (
-    <View style={[styles.buttonRow, containerStyle]}>
+    <View style={[styles.buttonRow]}>
       {options.map((option, index) => {
         const selected = isSelected(option.key);
         return (

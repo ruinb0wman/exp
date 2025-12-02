@@ -8,7 +8,7 @@ export const darkColor = {
 
   // border
   border: '#000',
-  lightBorder: '#A1A1AA',
+  lightBorder: '#334155',
   darkVBorder: '#000',
 
   // fill
