@@ -7,5 +7,5 @@ export type InitResult =
   | { db?: NativeORM; rawDB?: NativeSqlite }
 
 // 声明函数签名（不实现）
-export declare function initDB(): InitResult;
+// export declare function initDB(): InitResult;
 export declare function getDB(): InitResult;

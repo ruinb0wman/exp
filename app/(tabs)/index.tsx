@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { router } from "expo-router";
-import { useCallback } from "react";
-import { useDbContext } from "@/context/db";
-import { useFocusEffect } from "@react-navigation/native";
 import TaskDetail from '@/components/taskDetail';
 import TaskCard from '@/components/taskCard';
-import Label from '@/components/Label';
+import { getAllTask } from '@/db/services';
 
 export interface Task {
   id: number;
@@ -18,15 +15,12 @@ export interface Task {
 }
 
 export default function Index() {
-  const { canUseDB } = useDbContext();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskDetailVisible, setIsTaskDetailVisible] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log('in', canUseDB, performance.now());
-      if (!canUseDB) return;
-    }, [canUseDB]))
+  useEffect(() => {
+    getAllTask();
+  }, [])
 
   // Sample tasks data
   const tasks: Task[] = mock.tasks;

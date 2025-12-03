@@ -1,19 +1,19 @@
-import { DbProvider } from '@/context/db';
 import { ThemeProvider } from '@/context/theme';
 import ThemeProviderWrapper from "@/components/ThemeProviderWrapper";
 import { ToastProvider } from '@/context/toast';
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { useDrizzleStudio } from '@/hooks/drizzleStudio';
 
 export default function RootLayout() {
+  useDrizzleStudio();
+
   return (
-    <DbProvider>
-      <KeyboardProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            <ThemeProviderWrapper />
-          </ToastProvider>
-        </ThemeProvider>
-      </KeyboardProvider>
-    </DbProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <KeyboardProvider>
+          <ThemeProviderWrapper />
+        </KeyboardProvider>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
