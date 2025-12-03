@@ -17,7 +17,7 @@ export const taskTemplates = sqliteTable('task_templates', {
   endValue: text('end_value'),
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
-  subtasks: text('repeat_days_of_week').$type<string[]>().default(sql`'[]'`),
+  subtasks: text('subtasks').$type<string[]>().default(sql`'[]'`),
   isRandomSubtask: integer('is_random_subtask', { mode: 'boolean' }).notNull().default(false),
 });
 
