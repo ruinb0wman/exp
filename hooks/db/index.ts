@@ -3,8 +3,9 @@ import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from '@/db/drizzle/migrations';
 
-export function initDB() {
+export function useNativeDB() {
   const { db, rawDB } = getDB();
   useDrizzleStudio(rawDB);
-  const { success, error } = useMigrations(db, migrations);
+  const result = useMigrations(db, migrations);
+  console.log(result);
 }
