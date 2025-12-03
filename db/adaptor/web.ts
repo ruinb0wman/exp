@@ -4,7 +4,7 @@ import type { SqliteRemoteDatabase } from "drizzle-orm/sqlite-proxy";
 
 export type OrmType = SqliteRemoteDatabase<typeof schema>;
 
-const dbInstance: { db?: OrmType } = {}
+const dbInstance: { db: OrmType | null, rawDB: null } = { db: null, rawDB: null }
 
 export function initDB() {
   if (dbInstance.db) return dbInstance;

@@ -4,7 +4,8 @@ import { Plus } from 'lucide-react-native';
 import { router } from "expo-router";
 import TaskDetail from '@/components/taskDetail';
 import TaskCard from '@/components/taskCard';
-import { getAllTask } from '@/db/services';
+import { getAllTaskTemplates } from '@/db/services';
+import { taskTemplates } from '@/db';
 
 export interface Task {
   id: number;
@@ -17,9 +18,10 @@ export interface Task {
 export default function Index() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskDetailVisible, setIsTaskDetailVisible] = useState(false);
+  // const [tasks, setTasks] = useState<typeof taskTemplates.$inferInsert[]>([]);
 
   useEffect(() => {
-    getAllTask();
+    getAllTaskTemplates()?.then((tasks: any) => console.log('tasks', tasks));
   }, [])
 
   // Sample tasks data
@@ -77,7 +79,7 @@ export default function Index() {
         <View style={styles.tasksSection}>
           <View style={styles.tasksHeader}>
             <Text style={styles.tasksTitle}>Today's Tasks</Text>
-            <TouchableOpacity style={styles.allTasksButton}>
+            <TouchableOpacity style={styles.allTasksButton} onPress={() => router.push('/taskTemplates')}>
               <Text style={styles.allTasksIcon}>📋</Text>
               <Text style={styles.allTasksText}>All Tasks</Text>
             </TouchableOpacity>

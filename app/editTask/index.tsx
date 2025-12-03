@@ -11,6 +11,10 @@ import RewardPoint from "./components/rewardPoint";
 import Subtask from "./components/subTask";
 import RandomTaskSwitch from "./components/randomTaskSwitcher";
 import { getEmptyTaskTemplates } from "./lib";
+import { createTaskTemplate, getTaskTemplate, updateTaskTemplate } from "@/db/services";
+import { useLocalSearchParams } from 'expo-router';
+import { Trash } from "lucide-react-native";
+import { useTheme } from "@/context/theme";
 
 interface Props {
   id?: number;
@@ -18,19 +22,32 @@ interface Props {
 
 export default function EditTaskScreen({ id }: Props) {
   const [task, setTask, updateTask] = useCustomState<typeof taskTemplates.$inferInsert>(getEmptyTaskTemplates());
+  const params = useLocalSearchParams();
+  const { colors } = useTheme();
 
   useEffect(() => {
-    if (!id) return;
-    // TODO: Fetch task by id and setTask(...)
+    if (!params.id) return;
+    getTaskTemplate(Number(params.id))?.then((res) => { setTask(res[0]) })
   }, [id]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log('task', task);
+    let result;
+    if (params.id) {
+      result = await updateTaskTemplate(Number(params.id), task);
+    } else {
+      result = await createTaskTemplate(task);
+    }
+    console.log('result', result);
   };
 
   return (
     <View style={styles.container}>
-      <NavBar title="Create Task" back />
+      <NavBar title={params.id ? 'Edit Task' : "Create Task"} back
+        rightNode={
+          params.id && <TouchableOpacity><Trash color={colors.danger} /></TouchableOpacity>
+        }
+      />
 
       <KeyboardAwareScrollView
         style={styles.mainContent} contentContainerStyle={styles.scrollContent}

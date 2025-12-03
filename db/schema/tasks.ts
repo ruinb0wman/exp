@@ -6,12 +6,9 @@ import { sql } from 'drizzle-orm';
 // ======================
 export const taskTemplates = sqliteTable('task_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-
   title: text('title').notNull(),
   description: text('description'),
-
   rewardPoints: integer('reward_points').notNull(),
-
   repeatMode: text('repeat_mode', { enum: ['none', 'daily', 'weekly', 'monthly'] }).notNull(),
   repeatInterval: integer('repeat_interval'),
   repeatDaysOfWeek: text('repeat_days_of_week'), // JSON string of number[]
@@ -20,9 +17,7 @@ export const taskTemplates = sqliteTable('task_templates', {
   endValue: text('end_value'),
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
-  // 子任务：字符串数组（JSON 存储）
   subtasks: text('repeat_days_of_week').$type<string[]>().default(sql`'[]'`),
-  // 是否只需完成一个随机子任务
   isRandomSubtask: integer('is_random_subtask', { mode: 'boolean' }).notNull().default(false),
 });
 

@@ -1,5 +1,6 @@
 export const darkColor = {
   primary: '#2b8cee',
+  danger: 'red',
 
   // text
   text: '#FFFFFF',
