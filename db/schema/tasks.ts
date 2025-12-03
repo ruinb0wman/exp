@@ -21,7 +21,7 @@ export const taskTemplates = sqliteTable('task_templates', {
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
   // 子任务：字符串数组（JSON 存储）
-  subtasks: text('repeat_days_of_week').$type<string[]>(),
+  subtasks: text('repeat_days_of_week').$type<string[]>().default(sql`'[]'`),
   // 是否只需完成一个随机子任务
   isRandomSubtask: integer('is_random_subtask', { mode: 'boolean' }).notNull().default(false),
 });

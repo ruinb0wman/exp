@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1764496027749,
-      "tag": "0000_smooth_randall_flagg",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1764685515468,
-      "tag": "0001_glamorous_puma",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1764685616303,
-      "tag": "0002_complex_raza",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1764739601933,
-      "tag": "0003_powerful_lyja",
+      "when": 1764742893927,
+      "tag": "0000_jazzy_whiplash",
       "breakpoints": true
     }
   ]
