@@ -11,12 +11,12 @@ type Mode = 'none' | 'daily' | 'weekly' | 'monthly';
 interface Props {
   mode: Mode;
   interval: number | null;
-  daysOfWeek: string | null;
-  daysOfMonth: string | null;
+  daysOfWeek: number[] | null;
+  daysOfMonth: number[] | null;
   onModeChange: (mode: Mode) => void;
   onIntervalChange: (value: number | null) => void;
-  onDaysOfWeekChange: (value: string | null) => void;
-  onDaysOfMonthChange: (value: string | null) => void;
+  onDaysOfWeekChange: (value: number[] | null) => void;
+  onDaysOfMonthChange: (value: number[] | null) => void;
 }
 
 export default function RestockSettingsSection({
@@ -33,16 +33,16 @@ export default function RestockSettingsSection({
   const { info } = useToast();
 
   // 本地状态：用于输入框的受控值
-  const [weeklyInput, setWeeklyInput] = useState(daysOfWeek || '');
-  const [monthlyInput, setMonthlyInput] = useState(daysOfMonth || '');
+  const [weeklyInput, setWeeklyInput] = useState(daysOfWeek?.join(' ') || '');
+  const [monthlyInput, setMonthlyInput] = useState(daysOfMonth?.join(' ') || '');
 
   // 当外部 props 变化时（如表单重置），同步本地状态
   useEffect(() => {
-    setWeeklyInput(daysOfWeek || '');
+    setWeeklyInput(daysOfWeek?.join(' ') || '');
   }, [daysOfWeek]);
 
   useEffect(() => {
-    setMonthlyInput(daysOfMonth || '');
+    setMonthlyInput(daysOfMonth?.join(' ') || '');
   }, [daysOfMonth]);
 
   const validateAndSyncWeekly = () => {
@@ -61,10 +61,10 @@ export default function RestockSettingsSection({
       }
     }
 
-    const normalized = [...new Set(parts.map(Number))].sort((a, b) => a - b).join(' ');
+    const normalized = [...new Set(parts.map(Number))].sort((a, b) => a - b);
     onDaysOfWeekChange(normalized);
     // 可选：同步标准化值回输入框（提升一致性）
-    setWeeklyInput(normalized);
+    // setWeeklyInput(normalized.join(' '));
   };
 
   const validateAndSyncMonthly = () => {
@@ -83,9 +83,9 @@ export default function RestockSettingsSection({
       }
     }
 
-    const normalized = [...new Set(parts.map(Number))].sort((a, b) => a - b).join(' ');
+    const normalized = [...new Set(parts.map(Number))].sort((a, b) => a - b);
     onDaysOfMonthChange(normalized);
-    setMonthlyInput(normalized);
+    // setMonthlyInput(normalized);
   };
 
   return (

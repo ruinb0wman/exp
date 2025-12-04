@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
-import { sql } from 'drizzle-orm';
+import { sql, } from 'drizzle-orm';
+import { jsonArray, numberArray } from "../libs/customType";
 
 // ======================
 // 任务模板表
@@ -11,13 +12,13 @@ export const taskTemplates = sqliteTable('task_templates', {
   rewardPoints: integer('reward_points').notNull(),
   repeatMode: text('repeat_mode', { enum: ['none', 'daily', 'weekly', 'monthly'] }).notNull(),
   repeatInterval: integer('repeat_interval'),
-  repeatDaysOfWeek: text('repeat_days_of_week'), // JSON string of number[]
-  repeatDaysOfMonth: text('repeat_days_of_month'), // JSON string of number[]
+  repeatDaysOfWeek: numberArray('repeat_days_of_week'), // JSON string of number[]
+  repeatDaysOfMonth: numberArray('repeat_days_of_month'), // JSON string of number[]
   endCondition: text('end_condition', { enum: ['times', 'date', 'manual'] }).notNull(),
   endValue: text('end_value'),
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
-  subtasks: text('subtasks').$type<string[]>().default(sql`'[]'`),
+  subtasks: jsonArray('subtasks').default([]),
   isRandomSubtask: integer('is_random_subtask', { mode: 'boolean' }).notNull().default(false),
 });
 
