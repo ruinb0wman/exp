@@ -114,3 +114,27 @@ export function deduplicateTaskInstances(
 
   return Array.from(uniqueInstances.values());
 }
+
+/**
+ * Finds task instances that exist in the generated array but not in the database array
+ * @param generatedInstances Array of newly generated task instances
+ * @param savedInstances Array of task instances from the database
+ * @returns Array of task instances that are in generated array but not in database array
+ */
+export function findNewTaskInstances(
+  generatedInstances: TaskInstance[],
+  savedInstances: TaskInstance[]
+): TaskInstance[] {
+  // Create a set of keys for instances in the database array for fast lookup
+  const savedInstanceKeys = new Set<string>();
+  for (const instance of savedInstances) {
+    const key = `${instance.templateId}-${instance.scheduledDate.toISOString()}`;
+    savedInstanceKeys.add(key);
+  }
+
+  // Filter generated instances to only include those not present in the database
+  return generatedInstances.filter(instance => {
+    const key = `${instance.templateId}-${instance.scheduledDate.toISOString()}`;
+    return !savedInstanceKeys.has(key);
+  });
+}
