@@ -8,7 +8,7 @@ export default function ThemeProviderWrapper() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <StatusBar />
+      <StatusBar backgroundColor={colors.background} barStyle='light-content' />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background, padding: size.spacing } }} >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
