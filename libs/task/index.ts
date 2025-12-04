@@ -1,7 +1,6 @@
 import type { TaskInstanceInput, TaskTemplateInput } from "./type.d"
 import { hasEndConditionBeenReached, matchesRepeatCriteria } from "./tools";
 
-
 /**
  * Generates a task instance from a task template based on the given date
  * @param date The date to check against the template's repeat criteria
@@ -32,12 +31,6 @@ export function generateTaskInstance(date: Date, taskTemplate: TaskTemplateInput
       const randomSubtask = incompleteSubtasks[Math.floor(Math.random() * incompleteSubtasks.length)];
       selectedSubtask = randomSubtask.content;
     }
-  } else if (taskTemplate.subtasks && taskTemplate.subtasks.length > 0) {
-    // If not random, select the first incomplete subtask
-    const firstIncomplete = taskTemplate.subtasks.find(subtask => !subtask.completed);
-    if (firstIncomplete) {
-      selectedSubtask = firstIncomplete.content;
-    }
   }
 
   // Create and return the task instance object
@@ -50,6 +43,21 @@ export function generateTaskInstance(date: Date, taskTemplate: TaskTemplateInput
   };
 }
 
+/**
+ * Generates multiple task instances from an array of task templates based on the given date
+ * @param date The date to check against each template's repeat criteria
+ * @param taskTemplates An array of templates to use for creating instances
+ * @returns Array of task instance objects that match the templates' repeat criteria
+ */
+export function generateTaskInstances(date: Date, taskTemplates: TaskTemplateInput[]): TaskInstanceInput[] {
+  const taskInstances: TaskInstanceInput[] = [];
 
+  for (const taskTemplate of taskTemplates) {
+    const taskInstance = generateTaskInstance(date, taskTemplate);
+    if (taskInstance !== null) {
+      taskInstances.push(taskInstance);
+    }
+  }
 
-
+  return taskInstances;
+}
