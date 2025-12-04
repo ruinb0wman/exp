@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { sql, } from 'drizzle-orm';
 import { jsonArray, numberArray } from "../libs/customType";
 
@@ -34,6 +34,6 @@ export const taskInstances = sqliteTable('task_instances', {
   awardedPoints: integer('awarded_points').notNull(),
   subtask: text('subtask'),
 }, (table) => ({
-  uniqueTemplateDate: index('task_instance_template_date_unique')
+  uniqueTemplateDate: uniqueIndex('task_instance_template_date_unique')
     .on(table.templateId, table.scheduledDate),
 }));

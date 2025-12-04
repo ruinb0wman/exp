@@ -49,16 +49,19 @@ export function getAllTaskInstance() {
   return db.select().from(taskInstances);
 }
 
+export function getTodaysTaskInstance() {
+
+}
+
 export function createTaskInstance(values: TaskInstance | TaskInstance[]) {
   const { db } = getDB();
   if (!db) return;
 
   const insertStatement = db.insert(taskInstances);
-
   // 处理drizzle values方法重载
   if (Array.isArray(values)) {
-    return insertStatement.values(values);
+    return insertStatement.values(values).onConflictDoNothing();
   } else {
-    return insertStatement.values(values);
+    return insertStatement.values(values).onConflictDoNothing();
   }
 }

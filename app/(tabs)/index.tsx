@@ -4,10 +4,10 @@ import { Plus } from 'lucide-react-native';
 import { router } from "expo-router";
 import TaskDetail from '@/components/taskDetail';
 import TaskCard from '@/components/taskCard';
-import { getAllTaskTemplates } from '@/db/services';
 import Label from "@/components/Label";
 import Header from "@/components/TabsIndexHeader";
 import Progress from "@/components/TabsIndexProgress"
+import { getAllTaskTemplates, getAllTaskInstance } from '@/db/services';
 
 export interface Task {
   id: number;
@@ -23,7 +23,7 @@ export default function Index() {
   // const [tasks, setTasks] = useState<typeof taskTemplates.$inferInsert[]>([]);
 
   useEffect(() => {
-    getAllTaskTemplates()?.then((tasks: any) => console.log('tasks', tasks));
+    getAllTaskInstance();
   }, [])
 
   // Sample tasks data

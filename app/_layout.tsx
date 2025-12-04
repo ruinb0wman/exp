@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { ThemeProvider } from '@/context/theme';
 import ThemeProviderWrapper from "@/components/ThemeProviderWrapper";
 import { ToastProvider } from '@/context/toast';
@@ -16,12 +15,9 @@ export default function RootLayout() {
   }
 
   useDailyCheck((today) => {
+    getTodaysdeDulplicatedTaskInstance();
     console.log('today', today)
   })
-
-  useEffect(() => {
-    getTodaysdeDulplicatedTaskInstance();
-  }, [])
 
   const getTodaysdeDulplicatedTaskInstance = async () => {
     const today = getTodayDateString();
@@ -29,10 +25,10 @@ export default function RootLayout() {
     const dbInstances = await getAllTaskInstance()
     if (!dbTemplates) return;
     const instances = generateTaskInstances(new Date(today), dbTemplates)
-    const newInstance = dbInstances ? findNewTaskInstances(dbInstances, instances) : instances;
+    const newInstance = dbInstances ? findNewTaskInstances(instances, dbInstances) : instances;
     console.log('newInstance', newInstance)
-    // const result = await createTaskInstance(deduplicated);
-    // console.log('result', result);
+    const result = await createTaskInstance(newInstance);
+    console.log('result', result);
   }
 
   return (
