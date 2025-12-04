@@ -2,9 +2,8 @@
  * 获取今天零点（00:00:00）的时间戳（毫秒）
  */
 export function getTodayTimestamp(): number {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return today.getTime(); // 返回毫秒时间戳
+  // 为避免时间戳转换为本地时间, 使用时间字符串创建Date后生成时间戳
+  return new Date(getTodayDateString()).getTime();
 }
 
 /**

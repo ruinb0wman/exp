@@ -1,10 +1,14 @@
 import { TaskInstance } from "@/libs/task";
 import { getDB } from "../adaptor";
 import { taskTemplates, taskInstances } from "../schema"
-import { eq } from "drizzle-orm";
+import { eq, and, gte, lt } from "drizzle-orm";
+import { getTodayDateString, getTodayTimestamp } from "@/libs/date";
 
 type Template = typeof taskTemplates.$inferInsert
 
+//
+// taskTemplates section
+//
 export function getAllTaskTemplates() {
   const { db } = getDB();
   if (!db) return;
@@ -42,6 +46,10 @@ export function deleteTaskTemplate(id: number) {
   return db.delete(taskTemplates).where(eq(taskTemplates.id, id));
 }
 
+//
+// taskInstances section
+//
+
 export function getAllTaskInstance() {
   const { db } = getDB();
   if (!db) return;
@@ -50,7 +58,18 @@ export function getAllTaskInstance() {
 }
 
 export function getTodaysTaskInstance() {
+  const { db } = getDB();
+  if (!db) return;
 
+  const today = getTodayDateString();
+  console.log('todayStartTimestamp', today, getTodayTimestamp())
+
+  return db
+    .select()
+    .from(taskInstances)
+    .where(
+      eq(taskInstances.scheduledDate, new Date(today))
+    ).leftJoin(taskTemplates, eq(taskInstances.templateId, taskTemplates.id));
 }
 
 export function createTaskInstance(values: TaskInstance | TaskInstance[]) {
@@ -64,4 +83,11 @@ export function createTaskInstance(values: TaskInstance | TaskInstance[]) {
   } else {
     return insertStatement.values(values).onConflictDoNothing();
   }
+}
+
+export function updateTaskInstance(id: number, task: Partial<TaskInstance>) {
+  const { db } = getDB();
+  if (!db) return;
+
+  return db.update(taskInstances).set(task).where(eq(taskInstances.id, id))
 }

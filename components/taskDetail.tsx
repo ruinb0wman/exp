@@ -1,14 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Popup from './popup';
-
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-  experience: number;
-}
+import type { Task } from './taskCard';
 
 interface TaskDetailProps {
   visible: boolean;
@@ -32,14 +25,14 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ visible, onClose, task }) => {
     <Popup visible={visible} onClose={onClose}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
-          <Text style={styles.title}>{task.title}</Text>
+          <Text style={styles.title}>{task.task_templates?.title}</Text>
           <View style={styles.experienceContainer}>
             <Text style={styles.starIcon}>⭐</Text>
-            <Text style={styles.experienceText}>+{task.experience} exp</Text>
+            <Text style={styles.experienceText}>+{task.task_instances.awardedPoints} exp</Text>
           </View>
         </View>
 
-        <Text style={styles.description}>{task.description}</Text>
+        <Text style={styles.description}>{task.task_templates?.description}</Text>
 
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>

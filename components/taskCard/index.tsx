@@ -1,52 +1,73 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Task } from '@/app/(tabs)/index';
 import Checkbox from "@/components/checkbox"
 import { ChevronRight } from 'lucide-react-native';
 import { useTheme } from '@/context/theme';
+import { taskInstances, taskTemplates } from '@/db';
+
+export interface Task {
+  task_instances: typeof taskInstances.$inferSelect;
+  task_templates: typeof taskTemplates.$inferSelect | null;
+}
+
+export type TaskStatus = 'pending' | 'completed' | 'skipped';
+
+export interface OnChangeProps {
+  id: number;
+  status: TaskStatus;
+}
 
 interface Props {
   task: Task;
   onPress: (task: Task) => void;
+  onChange?: (value: OnChangeProps) => void;
 }
 
-export default function TaskCard({ task, onPress }: Props) {
+export default function TaskCard({ task, onPress, onChange }: Props) {
   const { colors, size } = useTheme();
   const styles = useStyles();
+
+  const handleChangeStatus = () => {
+    let newStatus: TaskStatus;
+    if (task.task_instances.status == 'completed') {
+      newStatus = 'pending';
+    } else {
+      newStatus = 'completed';
+    }
+
+    onChange && onChange({ id: task.task_instances.id, status: newStatus });
+  }
+
   return (
     <TouchableOpacity
-      style={[
-        styles.taskItem,
-
-      ]}
+      style={[styles.taskItem,]}
       onPress={() => onPress(task)}
     >
       <View style={styles.taskContent}>
-        <Checkbox checked={task.completed} />
+        <Checkbox checked={task.task_instances.status == 'completed'} onPress={handleChangeStatus} />
 
-        <View style={[styles.taskDetails, task.completed ? styles.completedTask : {}]}>
+        <View style={[styles.taskDetails, task.task_instances.status == 'completed' ? styles.completedTask : {}]}>
           <Text
             style={[
               styles.taskTitle,
-              task.completed ? styles.completedTaskTitle : {}
+              task.task_instances.status == 'completed' ? styles.completedTaskTitle : {}
             ]}
           >
-            {task.title}
+            {task.task_templates?.title}
           </Text>
           <Text
             numberOfLines={2}
             ellipsizeMode="tail"
             style={[
               styles.taskDescription,
-              task.completed ? styles.completedTaskDescription : {}
+              task.task_instances.status == 'completed' ? styles.completedTaskDescription : {}
             ]}
           >
-            {task.description}
+            {task.task_templates?.description}
           </Text>
         </View>
       </View>
       <ChevronRight color={colors.dimText} size={size.bigIcon} />
-
     </TouchableOpacity>
   );
 };

@@ -3,34 +3,27 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import { Plus } from 'lucide-react-native';
 import { router } from "expo-router";
 import TaskDetail from '@/components/taskDetail';
-import TaskCard from '@/components/taskCard';
+import TaskCard, { type Task, type OnChangeProps } from '@/components/taskCard';
 import Label from "@/components/Label";
 import Header from "@/components/TabsIndexHeader";
 import Progress from "@/components/TabsIndexProgress"
-import { getAllTaskTemplates, getAllTaskInstance } from '@/db/services';
+import { getTodaysTaskInstance, updateTaskInstance } from '@/db/services';
 
-export interface Task {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-  experience: number;
-}
 
 export default function Index() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskDetailVisible, setIsTaskDetailVisible] = useState(false);
-  // const [tasks, setTasks] = useState<typeof taskTemplates.$inferInsert[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    getAllTaskInstance();
+    setTasksFromDB();
   }, [])
 
   // Sample tasks data
-  const tasks: Task[] = mock.tasks;
+  // const tasks: Task[] = mock.tasks;
 
   // Calculate completed tasks
-  const completedTasks = tasks.filter(task => task.completed).length;
+  const completedTasks = tasks.filter(task => task.task_instances.status == 'completed').length;
   const totalTasks = tasks.length;
 
   // User data
@@ -40,6 +33,18 @@ export default function Index() {
     setSelectedTask(task);
     setIsTaskDetailVisible(true);
   };
+
+  const handleTaskStatusChange = async ({ id, status }: OnChangeProps) => {
+    const result = await updateTaskInstance(id, { status })
+    console.log('result', result)
+    setTasksFromDB();
+  }
+
+  const setTasksFromDB = () => {
+    getTodaysTaskInstance()?.then((tasks) => {
+      setTasks(tasks)
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -58,11 +63,17 @@ export default function Index() {
             }>Today's Tasks</Label>
           </View>
 
-          {tasks.map((task) => (
+          {tasks.sort((a, b) => {
+            if (a.task_instances.status === b.task_instances.status) return 0;
+            if (a.task_instances.status === "completed") return 1;
+            if (b.task_instances.status === "completed") return -1;
+            return 0;
+          }).map((task) => (
             <TaskCard
-              key={task.id}
+              key={task.task_instances.id}
               task={task}
               onPress={handleTaskPress}
+              onChange={handleTaskStatusChange}
             />
           ))}
         </View>
