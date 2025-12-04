@@ -17,7 +17,7 @@ export const taskTemplates = sqliteTable('task_templates', {
   endCondition: text('end_condition', { enum: ['times', 'date', 'manual'] }).notNull(),
   endValue: text('end_value'),
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
-  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`).notNull(),
   subtasks: jsonArray('subtasks').default([]),
   isRandomSubtask: integer('is_random_subtask', { mode: 'boolean' }).notNull().default(false),
 });

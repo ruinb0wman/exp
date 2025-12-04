@@ -1,24 +1,25 @@
 import { useEffect, useRef } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTodayDateString } from "@/libs/date";
 
 const STORAGE_KEY = 'LAST_DAILY_ACTION_DATE';
 
 /**
  * 定义回调函数的类型：可以是同步也可以是异步
  */
-type DailyActionCallback = () => void | Promise<void>;
+type DailyActionCallback = (today: string) => void | Promise<void>;
 
 /**
  * 获取本地日期字符串 (格式: YYYY-MM-DD)
  */
-const getLocalDateString = (): string => {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+// const getLocalDateString = (): string => {
+//   const date = new Date();
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, '0');
+//   const day = String(date.getDate()).padStart(2, '0');
+//   return `${year}-${month}-${day}`;
+// };
 
 export const useDailyCheck = (actionCallback: DailyActionCallback) => {
   // 显式定义 useRef 的泛型为 AppStateStatus
@@ -26,14 +27,14 @@ export const useDailyCheck = (actionCallback: DailyActionCallback) => {
 
   const checkAndRun = async () => {
     try {
-      const today = getLocalDateString();
+      const today = getTodayDateString();
       const lastDate = await AsyncStorage.getItem(STORAGE_KEY);
 
       if (lastDate !== today) {
         console.log(`[DailyCheck] 执行操作: 上次 ${lastDate || '无记录'}, 今天 ${today}`);
 
         // 等待回调执行完成（如果是异步的）
-        await actionCallback();
+        await actionCallback(today);
 
         // 更新存储
         await AsyncStorage.setItem(STORAGE_KEY, today);

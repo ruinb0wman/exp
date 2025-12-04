@@ -1,5 +1,6 @@
+import { TaskInstance } from "@/libs/task";
 import { getDB } from "../adaptor";
-import { taskTemplates } from "../schema"
+import { taskTemplates, taskInstances } from "../schema"
 import { eq } from "drizzle-orm";
 
 type Template = typeof taskTemplates.$inferInsert
@@ -39,4 +40,25 @@ export function deleteTaskTemplate(id: number) {
   if (!db) return;
 
   return db.delete(taskTemplates).where(eq(taskTemplates.id, id));
+}
+
+export function getAllTaskInstance() {
+  const { db } = getDB();
+  if (!db) return;
+
+  return db.select().from(taskInstances);
+}
+
+export function createTaskInstance(values: TaskInstance | TaskInstance[]) {
+  const { db } = getDB();
+  if (!db) return;
+
+  const insertStatement = db.insert(taskInstances);
+
+  // 处理drizzle values方法重载
+  if (Array.isArray(values)) {
+    return insertStatement.values(values);
+  } else {
+    return insertStatement.values(values);
+  }
 }

@@ -1,9 +1,13 @@
-import type { TaskTemplateInput } from "./type";
+import { taskTemplates, taskInstances } from "@/db";
+// Define TypeScript types based on the schema
+export type TaskTemplate = typeof taskTemplates.$inferSelect;
+export type TaskInstance = typeof taskInstances.$inferInsert;
+export type DateInput = Date | { startDate: Date; endDate: Date };
 
 /**
  * Checks if the end condition has been reached for a task template
  */
-export function hasEndConditionBeenReached(date: Date, taskTemplate: TaskTemplateInput): boolean {
+export function hasEndConditionBeenReached(date: Date, taskTemplate: TaskTemplate): boolean {
   if (taskTemplate.endCondition === 'manual') {
     return false;
   }
@@ -22,7 +26,7 @@ export function hasEndConditionBeenReached(date: Date, taskTemplate: TaskTemplat
 /**
  * Checks if the given date matches the template's repeat criteria
  */
-export function matchesRepeatCriteria(date: Date, taskTemplate: TaskTemplateInput): boolean {
+export function matchesRepeatCriteria(date: Date, taskTemplate: TaskTemplate): boolean {
   const dateToCheck = new Date(date);
   dateToCheck.setHours(0, 0, 0, 0); // Normalize to start of day
 
@@ -35,7 +39,7 @@ export function matchesRepeatCriteria(date: Date, taskTemplate: TaskTemplateInpu
     case 'daily':
       if (taskTemplate.repeatInterval) {
         // If repeatInterval is set, check if the number of days since creation is divisible by the interval
-        const creationDate = new Date(taskTemplate.createdAt);
+        const creationDate = taskTemplate.createdAt;
         const timeDiff = dateToCheck.getTime() - creationDate.getTime();
         const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
         return daysDiff % taskTemplate.repeatInterval === 0;

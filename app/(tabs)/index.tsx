@@ -5,7 +5,9 @@ import { router } from "expo-router";
 import TaskDetail from '@/components/taskDetail';
 import TaskCard from '@/components/taskCard';
 import { getAllTaskTemplates } from '@/db/services';
-import { taskTemplates } from '@/db';
+import Label from "@/components/Label";
+import Header from "@/components/TabsIndexHeader";
+import Progress from "@/components/TabsIndexProgress"
 
 export interface Task {
   id: number;
@@ -30,7 +32,6 @@ export default function Index() {
   // Calculate completed tasks
   const completedTasks = tasks.filter(task => task.completed).length;
   const totalTasks = tasks.length;
-  const progressPercentage = (completedTasks / totalTasks) * 100;
 
   // User data
   const userProfile = mock.userProfile;
@@ -43,46 +44,18 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Header Section */}
-        <View style={styles.header}>
-          <View style={styles.userSection}>
-            <View style={styles.userInfo}>
-              <Text style={styles.userName}>Exp</Text>
-              <Text style={styles.greeting}>Good Morning!</Text>
-            </View>
-          </View>
-
-          <View style={styles.expSection}>
-            <View style={styles.starIcon}>
-              <Text style={styles.starIconText}>⭐</Text>
-            </View>
-            <Text style={styles.expText}>{userProfile.exp.toLocaleString()} exp</Text>
-          </View>
-        </View>
-
-        {/* Progress Section */}
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>
-            You've completed {completedTasks} of {totalTasks} tasks today.
-          </Text>
-          <View style={styles.progressBar}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${progressPercentage}%` }
-              ]}
-            />
-          </View>
-        </View>
+        <Header exp={userProfile.exp} />
+        <Progress complete={completedTasks} total={totalTasks} />
 
         {/* Tasks Section */}
         <View style={styles.tasksSection}>
           <View style={styles.tasksHeader}>
-            <Text style={styles.tasksTitle}>Today's Tasks</Text>
-            <TouchableOpacity style={styles.allTasksButton} onPress={() => router.push('/taskTemplates')}>
-              <Text style={styles.allTasksIcon}>📋</Text>
-              <Text style={styles.allTasksText}>All Tasks</Text>
-            </TouchableOpacity>
+            <Label textStyle={{ fontSize: 20 }} rightNode={
+              <TouchableOpacity style={styles.allTasksButton} onPress={() => router.push('/taskTemplates')}>
+                <Text style={styles.allTasksIcon}>📋</Text>
+                <Text style={styles.allTasksText}>All Tasks</Text>
+              </TouchableOpacity>
+            }>Today's Tasks</Label>
           </View>
 
           {tasks.map((task) => (
@@ -117,85 +90,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 50, // Extra padding to account for bottom nav
+    paddingBottom: 50,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  userSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    resizeMode: 'cover',
-  },
-  userInfo: {
-    justifyContent: 'center',
-  },
-  greeting: {
-    fontSize: 14,
-    color: '#A1A1AA', // zinc-400
-    fontFamily: 'Inter',
-    fontWeight: '400',
-  },
-  userName: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontFamily: 'Inter',
-    fontWeight: '700',
-  },
-  expSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#2b8cee1a', // primary/10
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 24,
-  },
-  starIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  starIconText: {
-    fontSize: 18,
-    color: '#2b8cee', // primary
-  },
-  expText: {
-    fontSize: 14,
-    color: '#2b8cee', // primary
-    fontFamily: 'Inter',
-    fontWeight: '700',
-  },
-  progressContainer: {
-    marginBottom: 24,
-  },
-  progressText: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    fontFamily: 'Inter',
-    fontWeight: '400',
-    marginBottom: 8,
-  },
-  progressBar: {
-    width: '100%',
-    height: 8,
-    backgroundColor: '#3F3F46', // zinc-700
-    borderRadius: 9999,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#2b8cee', // primary
-    borderRadius: 9999,
-  },
+
   tasksSection: {
     flex: 1,
   },
@@ -215,110 +112,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#2b8cee1a', // primary/10
+    backgroundColor: '#2b8cee1a',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 24,
   },
   allTasksIcon: {
     fontSize: 18,
-    color: '#2b8cee', // primary
+    color: '#2b8cee',
   },
   allTasksText: {
     fontSize: 14,
-    color: '#2b8cee', // primary
+    color: '#2b8cee',
     fontFamily: 'Inter',
     fontWeight: '500',
-  },
-  taskItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#1F293780', // zinc-800/50
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    minHeight: 72,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  completedTask: {
-    opacity: 0.6,
-  },
-  taskContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  checkboxContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 28,
-    height: 28,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#A1A1AA', // zinc-400
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  checkedCheckbox: {
-    backgroundColor: '#2b8cee', // primary
-    borderColor: '#2b8cee', // primary
-  },
-  checkmark: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  taskDetails: {
-    justifyContent: 'center',
-    marginLeft: 16,
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    fontFamily: 'Inter',
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  completedTaskTitle: {
-    textDecorationLine: 'line-through',
-  },
-  taskDescription: {
-    fontSize: 14,
-    color: '#A1A1AA', // zinc-400
-    fontFamily: 'Inter',
-    fontWeight: '400',
-  },
-  completedTaskDescription: {
-    textDecorationLine: 'line-through',
-  },
-  taskIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 28,
-    height: 28,
-  },
-  chevronIcon: {
-    fontSize: 24,
-    color: '#A1A1AA', // zinc-400
   },
   fab: {
     position: 'absolute',
-    bottom: 80, // Above the bottom nav
+    bottom: 80,
     right: 16,
     width: 56,
     height: 56,
-    backgroundColor: '#2b8cee', // primary
+    backgroundColor: '#2b8cee',
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
@@ -328,45 +143,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 80,
-    backgroundColor: '#1F2937CC', // zinc-800/80 with backdrop blur effect
-    borderTopWidth: 1,
-    borderTopColor: '#3F3F46', // zinc-700
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  navItem: {
-    alignItems: 'center',
-    width: 64,
-  },
-  activeNavItem: {
-    // No additional styles needed, handled by icon color
-  },
-  navIcon: {
-    fontSize: 24,
-    marginBottom: 4,
-    color: '#A1A1AA', // zinc-400
-  },
-  activeNavIcon: {
-    color: '#2b8cee', // primary
-  },
-  navLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter',
-    fontWeight: '500',
-    color: '#A1A1AA', // zinc-400
-  },
-  activeNavLabel: {
-    color: '#2b8cee', // primary
-  },
-});
+});;
 
 const mock = {
   tasks: [

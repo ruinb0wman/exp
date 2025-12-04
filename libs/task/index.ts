@@ -1,5 +1,10 @@
-import type { TaskInstanceInput, TaskTemplateInput } from "./type.d"
 import { hasEndConditionBeenReached, matchesRepeatCriteria } from "./tools";
+import { taskTemplates, taskInstances } from "@/db";
+// Define TypeScript types based on the schema
+export type TaskTemplate = typeof taskTemplates.$inferSelect;
+export type TaskInstance = typeof taskInstances.$inferInsert;
+export type DateInput = Date | { startDate: Date; endDate: Date };
+
 
 /**
  * Generates a task instance from a task template based on the given date
@@ -7,7 +12,7 @@ import { hasEndConditionBeenReached, matchesRepeatCriteria } from "./tools";
  * @param taskTemplate The template to use for creating the instance
  * @returns Task instance object if the date matches the template's repeat criteria, null otherwise
  */
-export function generateTaskInstance(date: Date, taskTemplate: TaskTemplateInput): TaskInstanceInput | null {
+export function generateTaskInstance(date: Date, taskTemplate: TaskTemplate): TaskInstance | null {
   // Check if the template is enabled
   if (!taskTemplate.enabled) {
     return null;
@@ -24,13 +29,9 @@ export function generateTaskInstance(date: Date, taskTemplate: TaskTemplateInput
   }
 
   // Select a subtask if random subtasks are enabled and there are subtasks available
-  let selectedSubtask: string | undefined;
+  let selectedSubtask = null;
   if (taskTemplate.isRandomSubtask && taskTemplate.subtasks && taskTemplate.subtasks.length > 0) {
-    const incompleteSubtasks = taskTemplate.subtasks.filter(subtask => !subtask.completed);
-    if (incompleteSubtasks.length > 0) {
-      const randomSubtask = incompleteSubtasks[Math.floor(Math.random() * incompleteSubtasks.length)];
-      selectedSubtask = randomSubtask.content;
-    }
+    selectedSubtask = taskTemplate.subtasks[Math.floor(Math.random() * taskTemplate.subtasks.length)] || null;
   }
 
   // Create and return the task instance object
@@ -44,20 +45,72 @@ export function generateTaskInstance(date: Date, taskTemplate: TaskTemplateInput
 }
 
 /**
- * Generates multiple task instances from an array of task templates based on the given date
- * @param date The date to check against each template's repeat criteria
+ * Generates multiple task instances from an array of task templates based on the given date or date range
+ * @param dateInput The date or date range to check against each template's repeat criteria
  * @param taskTemplates An array of templates to use for creating instances
  * @returns Array of task instance objects that match the templates' repeat criteria
  */
-export function generateTaskInstances(date: Date, taskTemplates: TaskTemplateInput[]): TaskInstanceInput[] {
-  const taskInstances: TaskInstanceInput[] = [];
+export function generateTaskInstances(dateInput: DateInput, taskTemplates: TaskTemplate[]): TaskInstance[] {
+  const taskInstances: TaskInstance[] = [];
 
-  for (const taskTemplate of taskTemplates) {
-    const taskInstance = generateTaskInstance(date, taskTemplate);
-    if (taskInstance !== null) {
-      taskInstances.push(taskInstance);
+  // Handle single date case
+  if (dateInput instanceof Date) {
+    for (const taskTemplate of taskTemplates) {
+      const taskInstance = generateTaskInstance(dateInput, taskTemplate);
+      if (taskInstance !== null) {
+        taskInstances.push(taskInstance);
+      }
+    }
+  }
+  // Handle date range case
+  else {
+    const { startDate, endDate } = dateInput;
+    const currentDate = new Date(startDate);
+
+    // Iterate through each day in the date range
+    while (currentDate <= endDate) {
+      // Create a copy of the current date to avoid reference issues
+      const dateToCheck = new Date(currentDate);
+
+      for (const taskTemplate of taskTemplates) {
+        const taskInstance = generateTaskInstance(dateToCheck, taskTemplate);
+        if (taskInstance !== null) {
+          taskInstances.push(taskInstance);
+        }
+      }
+
+      // Move to the next day
+      currentDate.setDate(currentDate.getDate() + 1);
     }
   }
 
   return taskInstances;
+}
+
+/**
+ * Merges two arrays of task instances and removes duplicates based on templateId and scheduledDate
+ * @param generatedInstances Array of newly generated task instances
+ * @param savedInstances Array of task instances from the database (will take priority in case of duplicates)
+ * @returns Merged array with unique task instances, with saved instances taking priority over generated ones in case of duplicates
+ */
+export function deduplicateTaskInstances(
+  generatedInstances: TaskInstance[],
+  savedInstances: TaskInstance[]
+): TaskInstance[] {
+  const uniqueInstances = new Map<string, TaskInstance>();
+
+  // Add generated instances first
+  for (const instance of generatedInstances) {
+    const key = `${instance.templateId}-${instance.scheduledDate.toISOString()}`;
+    uniqueInstances.set(key, instance);
+  }
+
+  // Add saved instances, which will overwrite any duplicates from generated instances
+  // This ensures saved instances (from database) take priority over newly generated ones
+  for (const instance of savedInstances) {
+    const key = `${instance.templateId}-${instance.scheduledDate.toISOString()}`;
+    uniqueInstances.set(key, instance);
+  }
+
+  return Array.from(uniqueInstances.values());
 }
