@@ -1,1 +1,0 @@
-ALTER TABLE `task_templates` ADD `subtasks` text DEFAULT '[]';

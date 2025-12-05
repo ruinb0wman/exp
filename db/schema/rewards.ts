@@ -1,11 +1,13 @@
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { sql } from 'drizzle-orm';
+import { users } from "./users";
 
 // ======================
 // 商品模板表 —— 定义可兑换商品的规则
 // ======================
-export const productTemplates = sqliteTable('product_templates', {
+export const rewardsTemplates = sqliteTable('product_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 
   title: text('title').notNull(),
   description: text('description'),
@@ -28,18 +30,16 @@ export const productTemplates = sqliteTable('product_templates', {
   replenishmentDaysOfWeek: text('replenishment_days_of_week'),   // JSON: "[1,3]"
   replenishmentDaysOfMonth: text('replenishment_days_of_month'), // JSON: "[1,15]"
 
-  // 上次开放兑换时间（用于判断补货周期）
-  lastReplenishedAt: integer('last_replenished_at', { mode: 'timestamp' }),
-
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
 });
 
 // ======================
 // 商品实例表 —— 用户背包中的具体物品（支持“使用”动作）
 // ======================
-export const productInstances = sqliteTable('product_instances', {
+export const rewardsInstances = sqliteTable('product_instances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  templateId: integer('template_id').notNull().references(() => productTemplates.id, { onDelete: 'cascade' }),
+  templateId: integer('template_id').notNull().references(() => rewardsTemplates.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
 
   // 状态：
   // - available: 可使用
@@ -47,11 +47,8 @@ export const productInstances = sqliteTable('product_instances', {
   // - expired: 已过期
   status: text('status', { enum: ['available', 'used', 'expired'] }).notNull().default('available'),
 
-  issuedAt: integer('issued_at', { mode: 'timestamp' }).notNull(), // 兑换时间
+  exchangeAt: integer('issued_at', { mode: 'timestamp' }).notNull(), // 兑换时间
   expiresAt: integer('expires_at', { mode: 'timestamp' }),         // 过期时间（可为空）
   usedAt: integer('used_at', { mode: 'timestamp' }),               // 使用时间（可为空）
-
-  // 扩展数据：存储唯一码、批次号等（JSON 字符串）
-  metadata: text('metadata'), // e.g. '{"code":"XYZ789","store":"Cafe"}'
-
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`),
 });

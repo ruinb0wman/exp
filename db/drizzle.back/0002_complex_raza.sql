@@ -1,1 +1,0 @@
-ALTER TABLE `task_instances` ADD `subtask` text;

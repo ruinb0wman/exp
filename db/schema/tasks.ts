@@ -1,12 +1,15 @@
 import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { sql, } from 'drizzle-orm';
 import { jsonArray, numberArray } from "../libs/customType";
+import { users } from "./users";
 
 // ======================
 // 任务模板表
 // ======================
 export const taskTemplates = sqliteTable('task_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+
   title: text('title').notNull(),
   description: text('description'),
   rewardPoints: integer('reward_points').notNull(),
@@ -27,6 +30,8 @@ export const taskTemplates = sqliteTable('task_templates', {
 // ======================
 export const taskInstances = sqliteTable('task_instances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+
   templateId: integer('template_id').notNull().references(() => taskTemplates.id, { onDelete: 'cascade' }),
   scheduledDate: integer('scheduled_date', { mode: 'timestamp' }).notNull(),
   status: text('status', { enum: ['pending', 'completed', 'skipped'] }).notNull().default('pending'),

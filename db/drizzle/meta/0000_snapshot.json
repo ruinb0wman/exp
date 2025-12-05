@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0801153f-6ccd-47e0-b58c-60e83a0f21ee",
+  "id": "46b7d32a-557e-4f18-b641-d53d225870d3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "task_instances": {
@@ -13,6 +13,13 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "template_id": {
           "name": "template_id",
@@ -65,10 +72,23 @@
             "template_id",
             "scheduled_date"
           ],
-          "isUnique": false
+          "isUnique": true
         }
       },
       "foreignKeys": {
+        "task_instances_user_id_users_id_fk": {
+          "name": "task_instances_user_id_users_id_fk",
+          "tableFrom": "task_instances",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "task_instances_template_id_task_templates_id_fk": {
           "name": "task_instances_template_id_task_templates_id_fk",
           "tableFrom": "task_instances",
@@ -96,6 +116,13 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "title": {
           "name": "title",
@@ -137,8 +164,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "'[]'"
+          "autoincrement": false
         },
         "repeat_days_of_month": {
           "name": "repeat_days_of_month",
@@ -173,9 +199,17 @@
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(strftime('%s', 'now') * 1000)"
+        },
+        "subtasks": {
+          "name": "subtasks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'[]'"
         },
         "is_random_subtask": {
           "name": "is_random_subtask",
@@ -187,7 +221,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "task_templates_user_id_users_id_fk": {
+          "name": "task_templates_user_id_users_id_fk",
+          "tableFrom": "task_templates",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -207,6 +255,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "status": {
@@ -238,12 +293,13 @@
           "notNull": false,
           "autoincrement": false
         },
-        "metadata": {
-          "name": "metadata",
-          "type": "text",
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(strftime('%s', 'now') * 1000)"
         }
       },
       "indexes": {},
@@ -254,6 +310,19 @@
           "tableTo": "product_templates",
           "columnsFrom": [
             "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "product_instances_user_id_users_id_fk": {
+          "name": "product_instances_user_id_users_id_fk",
+          "tableFrom": "product_instances",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -275,6 +344,13 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "title": {
           "name": "title",
@@ -350,8 +426,68 @@
           "notNull": false,
           "autoincrement": false
         },
-        "last_replenished_at": {
-          "name": "last_replenished_at",
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(strftime('%s', 'now') * 1000)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "product_templates_user_id_users_id_fk": {
+          "name": "product_templates_user_id_users_id_fk",
+          "tableFrom": "product_templates",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "points_history": {
+      "name": "points_history",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "related_entity_id": {
+          "name": "related_entity_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -361,9 +497,55 @@
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(strftime('%s', 'now') * 1000)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "points_history_user_id_users_id_fk": {
+          "name": "points_history_user_id_users_id_fk",
+          "tableFrom": "points_history",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "current_points": {
+          "name": "current_points",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},

@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1764742893927,
-      "tag": "0000_jazzy_whiplash",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1764754367617,
-      "tag": "0001_misty_kronos",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1764840489748,
-      "tag": "0002_organic_the_professor",
+      "when": 1764918503016,
+      "tag": "0000_bumpy_leader",
       "breakpoints": true
     }
   ]
