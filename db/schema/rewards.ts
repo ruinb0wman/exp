@@ -7,7 +7,7 @@ import { users } from "./users";
 // ======================
 export const rewardsTemplates = sqliteTable('product_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }).notNull(),
 
   title: text('title').notNull(),
   description: text('description'),
@@ -39,7 +39,7 @@ export const rewardsTemplates = sqliteTable('product_templates', {
 export const rewardsInstances = sqliteTable('product_instances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   templateId: integer('template_id').notNull().references(() => rewardsTemplates.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
 
   // 状态：
   // - available: 可使用

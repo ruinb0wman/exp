@@ -12,7 +12,7 @@ export type DateInput = Date | { startDate: Date; endDate: Date };
  * @param taskTemplate The template to use for creating the instance
  * @returns Task instance object if the date matches the template's repeat criteria, null otherwise
  */
-export function generateTaskInstance(date: Date, taskTemplate: TaskTemplate): TaskInstance | null {
+export function generateTaskInstance(userId: number, date: Date, taskTemplate: TaskTemplate): TaskInstance | null {
   // Check if the template is enabled
   if (!taskTemplate.enabled) {
     return null;
@@ -37,6 +37,7 @@ export function generateTaskInstance(date: Date, taskTemplate: TaskTemplate): Ta
   // Create and return the task instance object
   return {
     templateId: taskTemplate.id,
+    userId,
     scheduledDate: date,
     status: 'pending',
     awardedPoints: taskTemplate.rewardPoints,
@@ -50,13 +51,13 @@ export function generateTaskInstance(date: Date, taskTemplate: TaskTemplate): Ta
  * @param taskTemplates An array of templates to use for creating instances
  * @returns Array of task instance objects that match the templates' repeat criteria
  */
-export function generateTaskInstances(dateInput: DateInput, taskTemplates: TaskTemplate[]): TaskInstance[] {
+export function generateTaskInstances(userId: number, dateInput: DateInput, taskTemplates: TaskTemplate[]): TaskInstance[] {
   const taskInstances: TaskInstance[] = [];
 
   // Handle single date case
   if (dateInput instanceof Date) {
     for (const taskTemplate of taskTemplates) {
-      const taskInstance = generateTaskInstance(dateInput, taskTemplate);
+      const taskInstance = generateTaskInstance(userId, dateInput, taskTemplate);
       if (taskInstance !== null) {
         taskInstances.push(taskInstance);
       }
@@ -73,7 +74,7 @@ export function generateTaskInstances(dateInput: DateInput, taskTemplates: TaskT
       const dateToCheck = new Date(currentDate);
 
       for (const taskTemplate of taskTemplates) {
-        const taskInstance = generateTaskInstance(dateToCheck, taskTemplate);
+        const taskInstance = generateTaskInstance(userId, dateToCheck, taskTemplate);
         if (taskInstance !== null) {
           taskInstances.push(taskInstance);
         }

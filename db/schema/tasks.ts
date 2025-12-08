@@ -8,7 +8,7 @@ import { users } from "./users";
 // ======================
 export const taskTemplates = sqliteTable('task_templates', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
 
   title: text('title').notNull(),
   description: text('description'),
@@ -30,7 +30,7 @@ export const taskTemplates = sqliteTable('task_templates', {
 // ======================
 export const taskInstances = sqliteTable('task_instances', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
 
   templateId: integer('template_id').notNull().references(() => taskTemplates.id, { onDelete: 'cascade' }),
   scheduledDate: integer('scheduled_date', { mode: 'timestamp' }).notNull(),

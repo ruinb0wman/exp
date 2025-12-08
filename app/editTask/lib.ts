@@ -1,7 +1,13 @@
 import { taskTemplates } from "@/db";
+import { users } from "@/db";
 
-export function getEmptyTaskTemplates(): typeof taskTemplates.$inferInsert {
+type UserInfo = typeof users.$inferSelect;
+type TaskTemplate = typeof taskTemplates.$inferInsert;
+
+export function getEmptyTaskTemplates(userInfo: UserInfo): TaskTemplate {
+
   return {
+    userId: userInfo!.id,
     title: '',
     rewardPoints: 10,
     repeatMode: 'none',

@@ -8,16 +8,22 @@ import { useDailyCheck } from "@/hooks/useDailyCheck"
 import { getAllTaskTemplates, getAllTaskInstance, createTaskInstance } from '@/db/services';
 import { generateTaskInstances, findNewTaskInstances } from "@/libs/task";
 import { getTodayDateString } from '@/libs/date';
+import { useUserStore } from '@/store/users';
+import { useEffect } from 'react';
 
 export default function RootLayout() {
   if (Platform.OS !== 'web') {
     useNativeDB();
   }
+  const userStore = useUserStore();
+  useEffect(() => {
+    userStore.initUser();
+  }, [])
 
-  useDailyCheck((today) => {
-    getTodaysdeDulplicatedTaskInstance();
-    console.log('today', today)
-  })
+  // useDailyCheck((today) => {
+  //   getTodaysdeDulplicatedTaskInstance();
+  //   console.log('today', today)
+  // })
 
   const getTodaysdeDulplicatedTaskInstance = async () => {
     const today = getTodayDateString();
@@ -31,13 +37,17 @@ export default function RootLayout() {
     console.log('result', result);
   }
 
-  return (
-    <ThemeProvider>
-      <ToastProvider>
-        <KeyboardProvider>
-          <ThemeProviderWrapper />
-        </KeyboardProvider>
-      </ToastProvider>
-    </ThemeProvider>
-  );
+  if (userStore.userInfo) {
+    return (
+      <ThemeProvider>
+        <ToastProvider>
+          <KeyboardProvider>
+            <ThemeProviderWrapper />
+          </KeyboardProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    );
+  } else {
+    <></>
+  }
 }

@@ -91,3 +91,10 @@ export function updateTaskInstance(id: number, task: Partial<TaskInstance>) {
 
   return db.update(taskInstances).set(task).where(eq(taskInstances.id, id))
 }
+
+export function deleteTaskInstance(id: number) {
+  const { db } = getDB();
+  if (!db) return;
+
+  return db.delete(taskInstances).where(eq(taskInstances.id, id));
+}

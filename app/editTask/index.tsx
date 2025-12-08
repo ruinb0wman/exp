@@ -1,29 +1,37 @@
 import type { taskTemplates } from "@/db";
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+
+import React, { useEffect, useState } from 'react';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { Trash } from "lucide-react-native";
+import { useRouter } from "expo-router";
 import NavBar from '@/components/navBar';
 import CustomInput from "@/components/customInput";
 import Scheduling from "@/components/Scheduling";
 import Label from "@/components/Label";
+import Button from "@/components/Button"
+import Confirm from "@/components/Confirm";
 import { useCustomState } from "@/hooks/state";
+import { useTheme } from "@/context/theme";
+import { useUserStore } from "@/store/users";
+import { createTaskTemplate, getTaskTemplate, updateTaskTemplate, deleteTaskTemplate } from "@/db/services";
 import RewardPoint from "./components/rewardPoint";
 import Subtask from "./components/subTask";
 import RandomTaskSwitch from "./components/randomTaskSwitcher";
 import { getEmptyTaskTemplates } from "./lib";
-import { createTaskTemplate, getTaskTemplate, updateTaskTemplate } from "@/db/services";
 import { useLocalSearchParams } from 'expo-router';
-import { Trash } from "lucide-react-native";
-import { useTheme } from "@/context/theme";
 
 interface Props {
   id?: number;
 }
 
 export default function EditTaskScreen({ id }: Props) {
-  const [task, setTask, updateTask] = useCustomState<typeof taskTemplates.$inferInsert>(getEmptyTaskTemplates());
+  const { userInfo } = useUserStore();
+  const [task, setTask, updateTask] = useCustomState<typeof taskTemplates.$inferInsert>(getEmptyTaskTemplates(userInfo!));
+  const [showConfirm, setShowConfirm] = useState(false);
   const params = useLocalSearchParams();
   const { colors } = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     if (!params.id) return;
@@ -41,11 +49,17 @@ export default function EditTaskScreen({ id }: Props) {
     console.log('result', result);
   };
 
+  const handleDelete = async () => {
+    console.log('handleDelete', params.id);
+    await deleteTaskTemplate(Number(params.id));
+    router.back();
+  }
+
   return (
     <View style={styles.container}>
       <NavBar title={params.id ? 'Edit Task' : "Create Task"} back
         rightNode={
-          params.id && <TouchableOpacity><Trash color={colors.danger} /></TouchableOpacity>
+          params.id && <TouchableOpacity onPress={() => setShowConfirm(true)}><Trash color={colors.danger} /></TouchableOpacity>
         }
       />
 
@@ -96,11 +110,8 @@ export default function EditTaskScreen({ id }: Props) {
         }
       </KeyboardAwareScrollView>
 
-      <View style={styles.bottomButtonContainer}>
-        <TouchableOpacity style={styles.createButton} onPress={handleSave}>
-          <Text style={styles.createButtonText}>Create Task</Text>
-        </TouchableOpacity>
-      </View>
+      <Button onPress={handleSave} />
+      <Confirm title="Delete task" description="This operation will remove all related tasks" visible={showConfirm} onConfirm={() => { setShowConfirm(false); handleDelete() }} onCancel={() => setShowConfirm(false)} />
     </View>
   );
 }
@@ -115,29 +126,5 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
-  },
-  bottomButtonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    padding: 16,
-    paddingBottom: 36,
-  },
-  createButton: {
-    height: 56,
-    backgroundColor: '#2b8cee',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#2b8cee',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  createButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
   },
 });
